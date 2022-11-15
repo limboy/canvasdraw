@@ -2,12 +2,12 @@
   "name": "canvasdraw",
   "version": "1.0.0",
   "packageManager": "pnpm@7.16.0",
-  "description": "use canvascript to draw images",
+  "description": "draw art with code",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm --stream -r build",
-    "dev": "pnpm --filter backend dev",
-    "serve": "pnpm --filter backend serve"
+    "build": "pnpm run --filter canvascript build && pnpm run --filter frontend build",
+    "dev": "pnpm run --filter backend dev",
+    "serve": "pnpm run --filter backend serve"
   },
   "keywords": [],
   "author": "limboy",

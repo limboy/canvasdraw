@@ -65,7 +65,7 @@ async function tick() {
       }
     }
 
-    __canvas.render((err) => {
+    __canvas.render((err: Error) => {
       __codeErrMsg = err.message + "\n" + err.stack;
       tick();
     });
