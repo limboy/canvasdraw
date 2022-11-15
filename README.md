@@ -9,6 +9,7 @@
 Go to https://canvasdraw.limboy.me to start drawing.
 
 > **Note**
+> 
 > after a snippet is shared, add `.png` suffix will get you an image of that snippet
 >
 > ie: https://canvasdraw.limboy.me/snippet/ZL7pyCWi1Tq.png
