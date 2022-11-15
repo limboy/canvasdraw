@@ -2,7 +2,7 @@
   <a href="https://canvasdraw.limboy.me">
     <img width="540" src="./packages/frontend/public/assets/og.jpg" alt="draw art with code" />
   </a>
-  <p> Draw art with code </p>
+  <h3> Draw art with code </h3>
 </div>
 
 ### Try it now
