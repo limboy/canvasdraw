@@ -138,7 +138,7 @@ function loadSnippetIfNeeded() {
     fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
       data.text()
     ).then((snippetId) => {
-      location.href = "?snippet=" + snippetId;
+      location.href = "/?snippet=" + snippetId;
     });
   });
 })();
