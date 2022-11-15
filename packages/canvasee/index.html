@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" class="w-full h-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+  <link href="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/lib/codemirror.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/lib/codemirror.min.js"></script>
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/mode/javascript/javascript.js"></script>
+  -->
+  <link href="/codemirror.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="/codemirror.min.js"></script>
+  <script type="text/javascript" src="/codemirror.mode.javascript.js"></script>
+  <title>Canvasee</title>
+</head>
+
+<body class="h-full w-full">
+  <div class="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 h-full">
+    <div class="flex flex-col border-b border-gray-300 sm:border-r sm:border-gray-300 sm:border-b-0">
+      <div class="bg-gray-100 border-b border-gray-300 p-3 flex flex-row justify-between">
+        <div><a href="/" class="text-xl font-semibold text-gray-700">Canvasee</a></div>
+        <div class="flex flex-row gap-3 items-center">
+          <button id="run" class="btn">Run</button>
+          <button id="share" class="btn">Share</button>
+        </div>
+      </div>
+      <textarea id="editor" class="bg-white outline-none p-2 flex-grow"></textarea>
+    </div>
+    <div id="canvas-container" class="flex flex-col overflow-hidden">
+      <div class="h-full bg-white flex-grow relative flex items-center justify-center">
+        <div id="error" class="absolute h-full w-full top-0 left-0 hidden p-2 text-red-600"></div>
+        <canvas id="canvas" class="h-full w-full"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const editor = CodeMirror.fromTextArea(document.querySelector("#editor"), {
+      mode: "javascript",
+      lineNumbers: true,
+      indentUnit: 2,
+      smartIndent: true,
+      tabSize: 2,
+      lineWrapping: true,
+    });
+    editor.setValue(`// loading...`);
+    // // editor.getWrapperElement().style.visibility = "hidden";
+    // setTimeout(function () {
+    //   // editor.getWrapperElement().style.visibility = "visible";
+    //   editor.refresh();
+    //   setTimeout(() => {
+    //     document.querySelector("#run").click();
+    //   }, 250);
+    // }, 250);
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
