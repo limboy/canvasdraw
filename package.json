@@ -1,7 +1,8 @@
 {
-  "name": "canvasee",
+  "name": "canvasdraw",
   "version": "1.0.0",
-  "description": "",
+  "packageManager": "pnpm@7.16.0",
+  "description": "use canvascript to draw images",
   "main": "index.js",
   "scripts": {
     "build": "pnpm --stream -r build",
@@ -9,7 +10,7 @@
     "serve": "pnpm --filter backend serve"
   },
   "keywords": [],
-  "author": "",
+  "author": "limboy",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^4.8.4",
