@@ -10,6 +10,8 @@
 ### Try it now
 Go to https://canvasdraw.limboy.me to start drawing.
 
+draw API can be found [here](./packages/canvaslib/README.md).
+
 > **Note**
 > 
 > after a snippet is shared, add `.png` suffix will get you an image of that snippet
