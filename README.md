@@ -1,6 +1,6 @@
 <div align="center" style="display:flex;flex-direction:column;">
   <a href="https://canvasdraw.limboy.me">
-    <img width="540" src="./frontend/public/assets/og.jpg" alt="draw art with code" />
+    <img width="540" src="./packages/frontend/public/assets/og.jpg" alt="draw art with code" />
   </a>
   <p> Draw art with code </p>
 </div>
