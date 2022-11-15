@@ -1,7 +1,7 @@
 {
   "name": "canvascript",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.8.0",
+  "description": "write canvas API in a friendly way",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
