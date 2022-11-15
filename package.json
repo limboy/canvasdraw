@@ -2,7 +2,7 @@
   "name": "canvasdraw",
   "version": "1.0.0",
   "packageManager": "pnpm@7.16.0",
-  "description": "draw art with code",
+  "description": "draw with code",
   "main": "index.js",
   "scripts": {
     "build": "pnpm run --filter canvaslib build && pnpm run --filter frontend build",

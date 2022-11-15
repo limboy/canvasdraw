@@ -1,8 +1,8 @@
 <div align="center" style="display:flex;flex-direction:column;padding-bottom:3rem">
   <a href="https://canvasdraw.limboy.me">
-    <img width="540" src="./packages/frontend/public/assets/og.jpg" alt="draw art with code" />
+    <img width="540" src="./packages/frontend/public/assets/og.jpg" alt="draw with code" />
   </a>
-  <h3> Draw art with code </h3>
+  <h3> Draw with code </h3>
 </div>
 
 ![](canvasdraw.jpg)
