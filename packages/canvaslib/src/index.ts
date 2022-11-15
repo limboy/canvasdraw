@@ -19,7 +19,6 @@ abstract class Shape {
   flipH: boolean;
   flipV: boolean;
   scale?: [number, number];
-  clip: boolean;
   debug: boolean;
   _mask?: Shape;
   _preInstructions: any[];
@@ -51,7 +50,6 @@ abstract class Shape {
     this.flipH = false;
     this.flipV = false;
     this.scale = undefined;
-    this.clip = false;
     this.debug = false;
     this._mask = undefined;
     this._preInstructions = [];
