@@ -135,6 +135,13 @@ app.get("/snippet/:snippetId", (req, res) => {
 });
 
 app.get("/", (req, res) => {
+  const searchItems = new URLSearchParams(req.originalUrl.split("?").slice(1).join(""));
+  const snippetId = searchItems.get("snippet");
+  if (snippetId) {
+    res.redirect("/snippet/" + snippetId);
+    return;
+  }
+
   const indexHtmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
   res
     .header("content-type", "text/html")
