@@ -1,5 +1,5 @@
 {
-  "name": "canvascript",
+  "name": "canvaslib",
   "version": "0.8.0",
   "description": "write canvas API in a friendly way",
   "main": "./dist/index.js",

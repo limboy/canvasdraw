@@ -1,5 +1,5 @@
 import "./style.css";
-import * as CanvasItems from "canvascript";
+import * as CanvasItems from "canvaslib";
 
 declare const codeEditor: {
   getValue: () => string;
@@ -13,7 +13,7 @@ const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
 const error = document.querySelector("#error") as HTMLCanvasElement;
 const canvasContainer = document.querySelector("#canvas-container")!;
 
-(function addCanvascriptToGlobalScope() {
+(function addCanvaslibToGlobalScope() {
   type CanvasItemsKey = keyof typeof CanvasItems;
 
   for (let item of Object.keys(CanvasItems)) {

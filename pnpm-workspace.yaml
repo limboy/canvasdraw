@@ -1,4 +1,4 @@
 packages:
   - packages/frontend
   - packages/backend
-  - packages/canvascript
+  - packages/canvaslib

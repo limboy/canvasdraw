@@ -5,7 +5,7 @@
   "description": "draw art with code",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm run --filter canvascript build && pnpm run --filter frontend build",
+    "build": "pnpm run --filter canvaslib build && pnpm run --filter frontend build",
     "dev": "pnpm run --filter backend dev",
     "serve": "pnpm run --filter backend serve"
   },
@@ -14,6 +14,6 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^4.8.4",
-    "canvascript": "workspace:*"
+    "canvaslib": "workspace:*"
   }
 }
