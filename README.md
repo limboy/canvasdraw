@@ -8,6 +8,13 @@
 ### Try it now
 Go to https://canvasdraw.limboy.me to start drawing.
 
+> **Note**
+> after a snippet is shared, add `.png` suffix will get you an image of that snippet
+>
+> ie: https://canvasdraw.limboy.me/snippet/ZL7pyCWi1Tq.png
+>
+> you can even add query string to that url, and handle in snippet using `payload.uri`
+
 ### Installation
 #### Requirements
 - [Node.js](https://nodejs.org/)
