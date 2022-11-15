@@ -6,16 +6,18 @@
   <link rel="icon" type="image/png" size="180x180" href="/assets/favicon.png" />
   <link rel="apple-touch-icon" type="image/png" size="180x180" href="/assets/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!--
-  <link href="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/lib/codemirror.min.css" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/lib/codemirror.min.js"></script>
-  <script type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/codemirror@5.65.9/mode/javascript/javascript.js"></script>
-  -->
+
+  <meta property="og:image" content="__OG_IMAGE__" />
+  <meta property="og:title" content="CanvasDraw" />
+  <meta property="og:description" content="use canvascript to draw images" />
+  <meta name="twitter:image" content="__OG_IMAGE__" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:creator" content="_limboy" />
+
   <link href="/assets/codemirror.min.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="/assets/codemirror.min.js"></script>
   <script type="text/javascript" src="/assets/codemirror.mode.javascript.js"></script>
-  <title>Canvasee</title>
+  <title>CanvasDraw</title>
 </head>
 
 <body class="h-full w-full">
@@ -38,8 +40,8 @@
     </div>
   </div>
 
-  <script>
-    const editor = CodeMirror.fromTextArea(document.querySelector("#editor"), {
+  <script type="module">
+    window.codeEditor = CodeMirror.fromTextArea(document.querySelector("#editor"), {
       mode: "javascript",
       lineNumbers: true,
       indentUnit: 2,
@@ -47,7 +49,8 @@
       tabSize: 2,
       lineWrapping: true,
     });
-    editor.setValue(`// loading...`);
+
+    window.codeEditor.setValue(`// loading...`);
     // // editor.getWrapperElement().style.visibility = "hidden";
     // setTimeout(function () {
     //   // editor.getWrapperElement().style.visibility = "visible";

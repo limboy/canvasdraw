@@ -1,7 +1,7 @@
 import "./style.css";
 import * as CanvasItems from "canvascript";
 
-declare const editor: {
+declare const codeEditor: {
   getValue: () => string;
   setValue: (newValue: string) => void;
 };
@@ -84,7 +84,7 @@ function run() {
   __codeErrMsg = "";
   error.classList.add("hidden");
   try {
-    let func = new Function("return " + editor.getValue().trim());
+    let func = new Function("return " + codeEditor.getValue().trim());
     (window as any)["draw"] = func();
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -97,11 +97,16 @@ function run() {
 function loadSnippetIfNeeded() {
   const url = new URL(location.href);
   let snippetId = url.searchParams.get("snippet");
+  if (!snippetId) {
+    if (url.pathname.indexOf("/snippet/") !== -1) {
+      snippetId = url.pathname.split("/")[2];
+    }
+  }
   snippetId = snippetId ?? "SUPgjqfeURh";
   const snippetUrl = "https://corsproxy.limboy.me/" +
     "https://go.dev/_/share?id=" + snippetId;
   fetch(snippetUrl).then((data) => data.text()).then((result) => {
-    editor.setValue(result);
+    codeEditor.setValue(result);
     run();
   }).catch((e) => {
     if (e instanceof Error) {
@@ -128,7 +133,7 @@ function loadSnippetIfNeeded() {
   shareBtn.addEventListener("click", () => {
     shareBtn.disabled = true;
     shareBtn.textContent = "Sharing...";
-    const snippet = editor.getValue();
+    const snippet = codeEditor.getValue();
     const postUrl = "https://corsproxy.limboy.me/https://go.dev/_/share";
     fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
       data.text()

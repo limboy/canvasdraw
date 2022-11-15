@@ -5,8 +5,12 @@ const crypto = require('crypto');
 const fetch = require('node-fetch');
 const { createCanvas, Image } = require('canvas')
 const CanvasItems = require("canvascript");
+const distDir = __dirname + "/../frontend/dist";
+const baseUrl = process.env.NODE_ENV === "dev" ? "http://localhost:3727" : "https://canvasdraw.limboy.me"
 
 const app = express();
+app.use('/assets', express.static(distDir + "/assets"));
+
 const port = 3727;
 const snippetImagesDir = __dirname + "/snippet-images";
 
@@ -120,6 +124,21 @@ app.get("/snippet/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
       console.log(err);
     }
   });
+})
+
+app.get("/snippet/:snippetId", (req, res) => {
+  let indexHtmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
+  indexHtmlCnt = indexHtmlCnt.replaceAll("https://canvasdraw.limboy.me/assets/og.jpg", baseUrl + "/snippet/" + req.params.snippetId + ".png");
+  res
+    .header("content-type", "text/html")
+    .send(indexHtmlCnt)
+});
+
+app.get("/", (req, res) => {
+  const indexHtmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
+  res
+    .header("content-type", "text/html")
+    .send(indexHtmlCnt)
 })
 
 app.listen(port, () => {
