@@ -24,8 +24,9 @@
   <div class="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 h-full">
     <div class="flex flex-col border-b border-gray-300 sm:border-r sm:border-gray-300 sm:border-b-0">
       <div class="bg-gray-100 border-b border-gray-300 p-3 flex flex-row justify-between">
-        <div><a href="/" class="text-xl font-semibold text-gray-700">Canvasee</a></div>
+        <div><a href="/" class="text-xl font-semibold text-gray-700">CanvasDraw</a></div>
         <div class="flex flex-row gap-3 items-center">
+          <a id="demo-link" target="_blank" href="/" class="hover:underline">Demo</a>
           <button id="run" class="btn">Run</button>
           <button id="share" class="btn">Share</button>
         </div>
@@ -51,14 +52,22 @@
     });
 
     window.codeEditor.setValue(`// loading...`);
-    // // editor.getWrapperElement().style.visibility = "hidden";
-    // setTimeout(function () {
-    //   // editor.getWrapperElement().style.visibility = "visible";
-    //   editor.refresh();
-    //   setTimeout(() => {
-    //     document.querySelector("#run").click();
-    //   }, 250);
-    // }, 250);
+
+    (() => {
+      const demoLinks = [
+        "/snippet/ZL7pyCWi1Tq",
+        "/snippet/a8I0YHC9rwy",
+        "/snippet/GdWh0_5buJC",
+        "/snippet/Nf0qgGxKhBK",
+        "/snippet/UL5-Oo6BTPD",
+        "/snippet/ssm2_RysDh1",
+        "/snippet/4id_K2E6bxa",
+        "/snippet/-kzAOR5l3n7",
+        "/snippet/SUPgjqfeURh"
+      ];
+      const target = document.querySelector("#demo-link");
+      target.href = demoLinks[Math.floor(Math.random() * demoLinks.length)];
+    })();
   </script>
   <script type="module" src="/src/main.ts"></script>
 </body>
