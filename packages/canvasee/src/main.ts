@@ -6,7 +6,7 @@ declare const editor: {
   setValue: (newValue: string) => void;
 };
 
-let __seq = 0;
+let __frame = 0;
 let __codeErrMsg = "";
 let __animationId = 0;
 const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
@@ -41,7 +41,10 @@ async function tick() {
       canvas.width / devicePixelRatio,
       canvas.height / devicePixelRatio,
     );
-    const payload = { uri: location.pathname + location.search, seq: __seq++ };
+    const payload = {
+      uri: location.pathname + location.search,
+      frame: __frame++,
+    };
     if (draw.constructor.name == "AsyncFunction") {
       await draw(__canvas, payload);
     } else {
@@ -77,7 +80,7 @@ async function tick() {
 }
 
 function run() {
-  __seq = 0;
+  __frame = 0;
   __codeErrMsg = "";
   error.classList.add("hidden");
   try {

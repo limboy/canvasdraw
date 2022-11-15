@@ -538,7 +538,9 @@ class Canvas {
   x: number;
   y: number;
   animate: boolean;
-  children: Shape[];
+  screenshotFrame: number;
+
+  _children: Shape[];
   _showGrid: boolean;
   _width: number;
   _height: number;
@@ -551,8 +553,9 @@ class Canvas {
     this.x = 0;
     this.y = 0;
     this.animate = false;
-    this.children = [];
+    this.screenshotFrame = 0;
 
+    this._children = [];
     this._fillColor = "white";
     this._showGrid = false;
     this._copyImageDataInstructions = [];
@@ -654,13 +657,13 @@ class Canvas {
 
   addChild(child: Shape) {
     child._canvas = this;
-    this.children.push(child);
+    this._children.push(child);
   }
 
   removeChild(child: Shape) {
-    const index = this.children.findIndex((elm) => elm === child);
+    const index = this._children.findIndex((elm) => elm === child);
     if (index !== -1) {
-      this.children.splice(index, 1);
+      this._children.splice(index, 1);
     }
   }
 
@@ -685,7 +688,7 @@ class Canvas {
         }
       });
     }
-    iterChildren(this.children);
+    iterChildren(this._children);
 
     return _instructions;
   }
