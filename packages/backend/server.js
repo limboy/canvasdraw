@@ -42,8 +42,8 @@ async function handleSnippet(snippetId, uri) {
     return;
   }
   const filename = imageFilenameForUri(uri);
-  const defaultCanvasWidth = 600;
-  const defaultCanvasHeight = 600;
+  const defaultCanvasWidth = 800;
+  const defaultCanvasHeight = 800;
 
   function _createCanvas(width, height) {
     let canvas = createCanvas(width, height);
@@ -52,11 +52,11 @@ async function handleSnippet(snippetId, uri) {
     return canvas;
   }
 
-  async function _drawCanvas(target, payload) {
+  async function _drawCanvas(target, payload, store) {
     if (globalThis["draw"].constructor.name == 'AsyncFunction') {
-      await globalThis["draw"](target, payload);
+      await globalThis["draw"](target, payload, store);
     } else {
-      globalThis["draw"](target, payload);
+      globalThis["draw"](target, payload, store);
     }
   }
 
@@ -67,10 +67,10 @@ async function handleSnippet(snippetId, uri) {
   let needRedraw = false;
 
   let _canvas = new globalThis["Canvas"](canvas.getContext('2d'), canvas.width, canvas.height);
-  _drawCanvas(_canvas, { uri, frame: 0 });
+  _drawCanvas(_canvas, { uri, frame: 0 }, {});
 
   if (_canvas.width !== defaultCanvasWidth) {
-    canvas = _createCanvas(_canvas.width, _canvas.height);
+    canvas = _createCanvas(_canvas.width * devicePixelRatio, _canvas.height * devicePixelRatio);
     _canvas = new globalThis["Canvas"](canvas.getContext('2d'), canvas.width, canvas.height);
     needRedraw = true;
   }
@@ -81,7 +81,8 @@ async function handleSnippet(snippetId, uri) {
   }
 
   if (needRedraw) {
-    _drawCanvas(_canvas, { uri, frame });
+    _canvas.clear();
+    _drawCanvas(_canvas, { uri, frame }, {});
   }
 
   _canvas.render();
@@ -100,7 +101,7 @@ async function handleSnippet(snippetId, uri) {
     globalThis[itemKey] = CanvasItems[itemKey];
   }
 
-  globalThis["devicePixelRatio"] = 1;
+  globalThis["devicePixelRatio"] = 2;
   globalThis["fetch"] = fetch;
   globalThis["Image"] = Image;
 })()
