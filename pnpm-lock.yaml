@@ -32,9 +32,12 @@ importers:
     specifiers:
       autoprefixer: ^10.4.13
       postcss: ^8.4.19
+      store2: ^2.14.2
       tailwindcss: ^3.2.4
       typescript: ^4.6.4
       vite: ^3.2.3
+    dependencies:
+      store2: 2.14.2
     devDependencies:
       autoprefixer: 10.4.13_postcss@8.4.19
       postcss: 8.4.19
@@ -1667,6 +1670,10 @@ packages:
   /statuses/2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /store2/2.14.2:
+    resolution: {integrity: sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==}
     dev: false
 
   /string-width/4.2.3:

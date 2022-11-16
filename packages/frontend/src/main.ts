@@ -1,5 +1,6 @@
 import "./style.css";
 import * as CanvasItems from "canvaslib";
+import store from "store2";
 
 declare const codeEditor: {
   getValue: () => string;
@@ -19,6 +20,13 @@ const canvasContainer = document.querySelector("#canvas-container")!;
   for (let item of Object.keys(CanvasItems)) {
     (window as any)[item] = CanvasItems[item as CanvasItemsKey];
   }
+})();
+
+(function saveCodeContinously() {
+  setInterval(() => {
+    const code = codeEditor.getValue();
+    store.set("code", code);
+  }, 3000);
 })();
 
 function resizeCanvasDom() {
@@ -95,6 +103,13 @@ function run() {
 }
 
 function loadSnippetIfNeeded() {
+  const localCode = store.get("code");
+  if (localCode) {
+    codeEditor.setValue(localCode);
+    run();
+    return;
+  }
+
   const url = new URL(location.href);
   let snippetId = url.searchParams.get("snippet");
   if (!snippetId) {
