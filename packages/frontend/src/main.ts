@@ -63,6 +63,8 @@ async function tick() {
       parseInt(canvas.getAttribute("height")!) !==
         __canvas.height * devicePixelRatio
     ) {
+      __canvas.clear();
+      __store = {};
       canvas.setAttribute("height", __canvas.height * devicePixelRatio + "");
       canvas.setAttribute("width", __canvas.width * devicePixelRatio + "");
       canvas.style.height = __canvas.height + "px";
@@ -79,11 +81,13 @@ async function tick() {
       tick();
     });
 
-    if (__canvas.animate) {
+    if (__canvas.fps > 0) {
       if (__animationId) {
         cancelAnimationFrame(__animationId);
       }
-      __animationId = requestAnimationFrame(tick);
+      setTimeout(() => {
+        __animationId = requestAnimationFrame(tick);
+      }, Math.max(1000 / 60, 1000 / __canvas.fps));
     }
   }
 }

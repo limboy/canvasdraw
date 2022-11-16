@@ -537,6 +537,7 @@ class Canvas {
   y: number;
   animate: boolean;
   screenshotFrame: number;
+  fps: number;
 
   _children: Shape[];
   _showGrid: boolean;
@@ -550,8 +551,8 @@ class Canvas {
   constructor(ctx: CanvasRenderingContext2D, width: number, height: number) {
     this.x = 0;
     this.y = 0;
-    this.animate = false;
     this.screenshotFrame = 0;
+    this.fps = 0;
 
     this._children = [];
     this._fillColor = "white";
@@ -663,6 +664,12 @@ class Canvas {
     if (index !== -1) {
       this._children.splice(index, 1);
     }
+  }
+
+  clear() {
+    const rect = new Rect(0, 0, this.width, this.height);
+    rect.fillColor = this._fillColor;
+    this.addChild(rect);
   }
 
   get instructions() {
