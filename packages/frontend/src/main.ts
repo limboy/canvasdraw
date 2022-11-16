@@ -10,6 +10,7 @@ declare const codeEditor: {
 let __frame = 0;
 let __codeErrMsg = "";
 let __animationId = 0;
+let __store = {};
 const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
 const error = document.querySelector("#error") as HTMLCanvasElement;
 const canvasContainer = document.querySelector("#canvas-container")!;
@@ -54,9 +55,9 @@ async function tick() {
       frame: __frame++,
     };
     if (draw.constructor.name == "AsyncFunction") {
-      await draw(__canvas, payload);
+      await draw(__canvas, payload, __store);
     } else {
-      draw(__canvas, payload);
+      draw(__canvas, payload, __store);
     }
     if (
       parseInt(canvas.getAttribute("height")!) !==
@@ -67,9 +68,9 @@ async function tick() {
       canvas.style.height = __canvas.height + "px";
       canvas.style.width = __canvas.width + "px";
       if (draw.constructor.name == "AsyncFunction") {
-        await draw(__canvas, payload);
+        await draw(__canvas, payload, __store);
       } else {
-        draw(__canvas, payload);
+        draw(__canvas, payload, __store);
       }
     }
 
