@@ -108,13 +108,6 @@ function run() {
 }
 
 function loadSnippetIfNeeded() {
-  const localCode = store.get("code");
-  if (localCode) {
-    codeEditor.setValue(localCode);
-    run();
-    return;
-  }
-
   const url = new URL(location.href);
   let snippetId = url.searchParams.get("snippet");
   if (!snippetId) {
@@ -122,7 +115,18 @@ function loadSnippetIfNeeded() {
       snippetId = url.pathname.split("/")[2];
     }
   }
-  snippetId = snippetId ?? "SUPgjqfeURh";
+
+  if (!snippetId) {
+    const localCode = store.get("code");
+    if (localCode) {
+      codeEditor.setValue(localCode);
+      run();
+      return;
+    } else {
+      snippetId = "SUPgjqfeURh";
+    }
+  }
+
   const snippetUrl = "https://corsproxy.limboy.me/" +
     "https://go.dev/_/share?id=" + snippetId;
   fetch(snippetUrl).then((data) => data.text()).then((result) => {
