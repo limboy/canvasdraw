@@ -135,6 +135,14 @@ app.get("/snippet/:snippetId", (req, res) => {
     .send(indexHtmlCnt)
 });
 
+app.get("/render/:snippetId", (req, res) => {
+  let htmlCnt = fs.readFileSync(distDir + "/render.html", "utf8");
+  htmlCnt = htmlCnt.replaceAll("https://canvasdraw.limboy.me/assets/og.jpg", baseUrl + "/snippet/" + req.params.snippetId + ".png");
+  res
+    .header("content-type", "text/html")
+    .send(htmlCnt)
+});
+
 app.get("/", (req, res) => {
   const searchItems = new URLSearchParams(req.originalUrl.split("?").slice(1).join(""));
   const snippetId = searchItems.get("snippet");

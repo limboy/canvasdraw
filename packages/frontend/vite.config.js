@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'url'
+
 const htmlPlugin = () => {
   return {
     name: 'html-transform',
@@ -12,5 +14,13 @@ const htmlPlugin = () => {
 
 /** @type {import('vite').UserConfig} */
 export default {
-  plugins: [htmlPlugin()]
+  plugins: [htmlPlugin()],
+  build: {
+    rollupOptions: {
+      input: {
+        index: fileURLToPath(new URL('./index.html', import.meta.url)),
+        render: fileURLToPath(new URL('./render.html', import.meta.url)),
+      },
+    },
+  },
 }

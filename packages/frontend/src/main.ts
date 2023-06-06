@@ -61,7 +61,7 @@ async function tick() {
     }
     if (
       parseInt(canvas.getAttribute("height")!) !==
-        __canvas.height * devicePixelRatio
+      __canvas.height * devicePixelRatio
     ) {
       __canvas.clear();
       __store = {};
@@ -114,6 +114,10 @@ function loadSnippetIfNeeded() {
     if (url.pathname.indexOf("/snippet/") !== -1) {
       snippetId = url.pathname.split("/")[2];
     }
+
+    if (url.pathname.indexOf("/render/") !== -1) {
+      snippetId = url.pathname.split("/")[2];
+    }
   }
 
   if (!snippetId) {
@@ -145,26 +149,28 @@ function loadSnippetIfNeeded() {
     tick();
   });
 
-  addEventListener("keydown", function (e) {
-    if (e.metaKey && e.key === "Enter") {
-      run();
-    }
-  });
+  if (document.querySelector("#run")) {
+    document.querySelector("#run")!.addEventListener("click", run);
 
-  document.querySelector("#run")!.addEventListener("click", run);
-
-  const shareBtn = document.querySelector("#share")! as HTMLButtonElement;
-  shareBtn.addEventListener("click", () => {
-    shareBtn.disabled = true;
-    shareBtn.textContent = "Sharing...";
-    const snippet = codeEditor.getValue();
-    const postUrl = "https://corsproxy.limboy.me/https://go.dev/_/share";
-    fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
-      data.text()
-    ).then((snippetId) => {
-      location.href = "/?snippet=" + snippetId;
+    addEventListener("keydown", function (e) {
+      if (e.metaKey && e.key === "Enter") {
+        run();
+      }
     });
-  });
+
+    const shareBtn = document.querySelector("#share")! as HTMLButtonElement;
+    shareBtn.addEventListener("click", () => {
+      shareBtn.disabled = true;
+      shareBtn.textContent = "Sharing...";
+      const snippet = codeEditor.getValue();
+      const postUrl = "https://corsproxy.limboy.me/https://go.dev/_/share";
+      fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
+        data.text()
+      ).then((snippetId) => {
+        location.href = "/?snippet=" + snippetId;
+      });
+    });
+  }
 })();
 
 (function init() {

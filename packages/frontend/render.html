@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="w-full h-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" size="180x180" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" type="image/png" size="180x180" href="/assets/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta property="og:image" content="__OG_IMAGE__" />
+  <meta property="og:title" content="CanvasDraw" />
+  <meta property="og:description" content="draw with code" />
+  <meta name="twitter:image" content="__OG_IMAGE__" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:creator" content="_limboy" />
+
+  <title>CanvasDraw</title>
+</head>
+
+<body class="h-full w-full">
+  <div class="h-full">
+    <div id="canvas-container" class="h-full">
+      <div class="h-full bg-white flex-grow relative flex items-center justify-center">
+        <div id="error" class="absolute h-full w-full top-0 left-0 hidden p-2 text-red-600 text-sm"></div>
+        <canvas id="canvas" class="h-full w-full"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var _code = "";
+    const codeEditor = {
+      getValue: () => _code,
+      setValue: (newValue) => _code = newValue
+    }
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
