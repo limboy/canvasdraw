@@ -73,6 +73,15 @@
       target.href = demoLinks[Math.floor(Math.random() * demoLinks.length)];
     })();
   </script>
+
+  <script>
+    ; (function () {
+      var src = '//cdn.jsdelivr.net/npm/eruda';
+      if (!/debug/.test(window.location)) return;
+      document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+      document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>');
+    })();
+  </script>
   <script type="module" src="/src/main.ts"></script>
 </body>
 
