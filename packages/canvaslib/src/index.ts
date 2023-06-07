@@ -547,6 +547,8 @@ class Canvas {
   _fillColor: string;
   _copyImageDataInstructions: any[];
   _cutImageDataInstructions: any[];
+  _gridSize: number;
+  _gridColor: string;
 
   constructor(ctx: CanvasRenderingContext2D, width: number, height: number) {
     this.x = 0;
@@ -562,6 +564,8 @@ class Canvas {
     this._ctx = ctx;
     this._width = width;
     this._height = height;
+    this._gridSize = 100;
+    this._gridColor = "rgba(0,0,0,0.2)";
   }
 
   set fillColor(color) {
@@ -638,8 +642,10 @@ class Canvas {
     return this._ctx;
   }
 
-  showGrid() {
+  showGrid(gridSize = 100, gridColor = "rgba(0,0,0,0.2)") {
     this._showGrid = true;
+    this._gridSize = gridSize;
+    this._gridColor = gridColor;
   }
 
   addChild(child: Shape) {
@@ -661,9 +667,9 @@ class Canvas {
   }
 
   _generateGrid(): any[] {
-    let stepSize = 100;
-    let gridInstructions: any[] = [[".fillStyle", "rgba(0,0,0,0.2)"]];
-    gridInstructions.push([".strokeStyle", "rgba(0,0,0,0.2)"]);
+    let stepSize = this._gridSize;
+    let gridInstructions: any[] = [[".fillStyle", this._gridColor]];
+    gridInstructions.push([".strokeStyle", this._gridColor]);
     for (let i = stepSize; i < this.width; i += stepSize) {
       if (i % stepSize === 0) {
         gridInstructions.push(["beginPath"]);
