@@ -668,7 +668,8 @@ class Canvas {
 
   _generateGrid(): any[] {
     let stepSize = this._gridSize;
-    let gridInstructions: any[] = [[".fillStyle", this._gridColor]];
+    let gridInstructions: any[] = [];
+    gridInstructions.push([".fillStyle", this._gridColor]);
     gridInstructions.push([".strokeStyle", this._gridColor]);
     for (let i = stepSize; i < this.width; i += stepSize) {
       if (i % stepSize === 0) {
@@ -688,6 +689,7 @@ class Canvas {
       }
     }
     gridInstructions.push([".fillStyle", "rgba(0,0,0,0)"]);
+    gridInstructions.push([".strokeStyle", "rgba(0,0,0,0)"]);
     return gridInstructions;
   }
 
