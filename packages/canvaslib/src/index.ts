@@ -610,22 +610,6 @@ class Canvas {
     ]);
   }
 
-  generateGrid(): any[] {
-    let stepSize = 20;
-    let gridInstructions: any[] = [[".fillStyle", "#e4e4e4"]];
-    for (let i = stepSize; i < this.width; i += stepSize) {
-      for (let j = stepSize; j < this.height; j += stepSize) {
-        if (i % 100 === 0 && j % 100 === 0) {
-          gridInstructions.push(["beginPath"]);
-          gridInstructions.push(["arc", i, j, 2, 0, Math.PI * 2]);
-          gridInstructions.push(["fill"]);
-        }
-      }
-    }
-    gridInstructions.push([".fillStyle", "rgba(0,0,0,0)"]);
-    return gridInstructions;
-  }
-
   get centerX() {
     return Math.floor(this._width / 2);
   }
@@ -654,6 +638,10 @@ class Canvas {
     return this._ctx;
   }
 
+  showGrid() {
+    this._showGrid = true;
+  }
+
   addChild(child: Shape) {
     child._canvas = this;
     this._children.push(child);
@@ -672,6 +660,31 @@ class Canvas {
     this.addChild(rect);
   }
 
+  _generateGrid(): any[] {
+    let stepSize = 100;
+    let gridInstructions: any[] = [[".fillStyle", "rgba(0,0,0,0.2)"]];
+    gridInstructions.push([".strokeStyle", "rgba(0,0,0,0.2)"]);
+    for (let i = stepSize; i < this.width; i += stepSize) {
+      if (i % stepSize === 0) {
+        gridInstructions.push(["beginPath"]);
+        gridInstructions.push(["moveTo", i, 0]);
+        gridInstructions.push(["lineTo", i, this.height]);
+        gridInstructions.push(["stroke"]);
+      }
+    }
+
+    for (let j = stepSize; j < this.height; j += stepSize) {
+      if (j % stepSize === 0) {
+        gridInstructions.push(["beginPath"]);
+        gridInstructions.push(["moveTo", 0, j]);
+        gridInstructions.push(["lineTo", this.width, j]);
+        gridInstructions.push(["stroke"]);
+      }
+    }
+    gridInstructions.push([".fillStyle", "rgba(0,0,0,0)"]);
+    return gridInstructions;
+  }
+
   get instructions() {
     let _instructions = [
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
@@ -679,7 +692,7 @@ class Canvas {
       ["fillRect", 0, 0, this._width, this._height],
     ];
     if (this._showGrid) {
-      _instructions = _instructions.concat(this.generateGrid());
+      _instructions = _instructions.concat(this._generateGrid());
     }
 
     function iterChildren(children) {
