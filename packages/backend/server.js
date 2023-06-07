@@ -128,11 +128,10 @@ app.get("/snippet/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
 })
 
 app.get("/snippet/:snippetId", (req, res) => {
-  let indexHtmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
-  indexHtmlCnt = indexHtmlCnt.replaceAll("https://canvasdraw.limboy.me/assets/og.jpg", baseUrl + "/snippet/" + req.params.snippetId + ".png");
+  let htmlCnt = fs.readFileSync(distDir + "/code.html", "utf8");
   res
     .header("content-type", "text/html")
-    .send(indexHtmlCnt)
+    .send(htmlCnt)
 });
 
 app.get("/render/:snippetId", (req, res) => {
@@ -144,13 +143,6 @@ app.get("/render/:snippetId", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  const searchItems = new URLSearchParams(req.originalUrl.split("?").slice(1).join(""));
-  const snippetId = searchItems.get("snippet");
-  if (snippetId) {
-    res.redirect("/snippet/" + snippetId);
-    return;
-  }
-
   const indexHtmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
   res
     .header("content-type", "text/html")

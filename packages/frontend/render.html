@@ -25,6 +25,8 @@
         <canvas id="canvas" class="h-full w-full"></canvas>
       </div>
     </div>
+
+    <a class="absolute block right-2 bottom-2 border-gray-600 p-2 font-mono" id="snippet" target="_blank">&lt;/&gt;</a>
   </div>
 
   <script>
@@ -33,6 +35,14 @@
       getValue: () => _code,
       setValue: (newValue) => _code = newValue
     }
+
+    const url = new URL(location.href);
+    let snippetId = "";
+    if (url.pathname.indexOf("/render/") !== -1) {
+      snippetId = url.pathname.split("/")[2];
+      document.querySelector("#snippet").href = "/snippet/" + snippetId;
+    }
+
   </script>
   <script type="module" src="/src/main.ts"></script>
 </body>

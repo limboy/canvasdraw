@@ -1,4 +1,5 @@
 import "./style.css";
+// @ts-ignore
 import * as CanvasItems from "canvaslib";
 import store from "store2";
 import util from './util';
@@ -162,13 +163,16 @@ function loadSnippetIfNeeded() {
     const shareBtn = document.querySelector("#share")! as HTMLButtonElement;
     shareBtn.addEventListener("click", () => {
       shareBtn.disabled = true;
-      shareBtn.textContent = "Sharing...";
+      shareBtn.textContent = "Publishing...";
       const snippet = codeEditor.getValue();
       const postUrl = "https://corsproxy.limboy.me/https://go.dev/_/share";
       fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
         data.text()
       ).then((snippetId) => {
-        location.href = "/?snippet=" + snippetId;
+        shareBtn.disabled = false;
+        shareBtn.textContent = "Publishing";
+        const url = location.protocol + "//" + location.host + "/render/" + snippetId;
+        window.open(url, "_blank");
       });
     });
   }

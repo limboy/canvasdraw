@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="w-full h-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/languages/javascript.min.js"></script>
+  <style>
+    pre {
+      margin: 0;
+      padding: 0 1rem 0;
+    }
+
+    #code {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body class="h-full w-full">
+  <pre> <code id="code" class="language-javascript"> </code> </pre>
+
+  <script>
+    const url = new URL(location.href);
+    let snippetId = "";
+    if (url.pathname.indexOf("/snippet/") !== -1) {
+      snippetId = url.pathname.split("/")[2];
+    }
+
+    if (snippetId) {
+      const snippetUrl = "https://corsproxy.limboy.me/" +
+        "https://go.dev/_/share?id=" + snippetId;
+      fetch(snippetUrl).then((data) => data.text()).then((result) => {
+        document.querySelector("#code").innerHTML = result;
+        hljs.highlightAll();
+      }).catch((e) => {
+        if (e instanceof Error) {
+          console.log(e);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
