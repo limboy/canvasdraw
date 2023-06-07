@@ -643,22 +643,16 @@ class Canvas {
     }
   }
 
-  clear() {
-    const rect = new Rect(0, 0, this.width, this.height);
-    rect.fillColor = this.fillColor;
-    this.addChild(rect);
-  }
-
-  reset() {
-    this.initalInstructions.forEach((instruction) => {
-      let funcName = instruction[0] as string;
-      if (funcName.startsWith(".")) {
-        this._ctx[funcName.slice(1)] = instruction[1];
-      } else {
-        this._ctx[funcName].apply(this._ctx, instruction.slice(1));
-      }
-    });
-  }
+  // reset() {
+  //   this.initalInstructions.forEach((instruction) => {
+  //     let funcName = instruction[0] as string;
+  //     if (funcName.startsWith(".")) {
+  //       this._ctx[funcName.slice(1)] = instruction[1];
+  //     } else {
+  //       this._ctx[funcName].apply(this._ctx, instruction.slice(1));
+  //     }
+  //   });
+  // }
 
   _generateGrid(): any[] {
     let stepSize = this._gridSize;
@@ -688,6 +682,7 @@ class Canvas {
 
   get initalInstructions() {
     let instructions = [
+      ["clearRect", 0, 0, this.width, this.height],
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
       [".fillStyle", this.fillColor],
       ["fillRect", 0, 0, this.width, this.height],
