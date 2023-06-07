@@ -1,6 +1,7 @@
 import "./style.css";
 import * as CanvasItems from "canvaslib";
 import store from "store2";
+import util from './util';
 
 declare const codeEditor: {
   getValue: () => string;
@@ -55,9 +56,9 @@ async function tick() {
       frame: __frame++,
     };
     if (draw.constructor.name == "AsyncFunction") {
-      await draw(__canvas, payload, __store);
+      await draw(__canvas, payload, __store, util);
     } else {
-      draw(__canvas, payload, __store);
+      draw(__canvas, payload, __store, util);
     }
     if (
       parseInt(canvas.getAttribute("height")!) !==
@@ -70,9 +71,9 @@ async function tick() {
       canvas.style.height = __canvas.height + "px";
       canvas.style.width = __canvas.width + "px";
       if (draw.constructor.name == "AsyncFunction") {
-        await draw(__canvas, payload, __store);
+        await draw(__canvas, payload, __store, util);
       } else {
-        draw(__canvas, payload, __store);
+        draw(__canvas, payload, __store, util);
       }
     }
 
