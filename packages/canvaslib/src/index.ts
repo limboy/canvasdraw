@@ -619,7 +619,10 @@ class Canvas {
   }
 
   blendMode(newMode: GlobalCompositeOperation) {
-    this._ctx.globalCompositeOperation = newMode;
+    const rect = new Rect(0, 0, 0, 0);
+    rect._canvas = this;
+    rect.appendInstruction([".globalCompositeOperation", newMode]);
+    this._children.push(rect);
   }
 
   showGrid(gridSize = 100, gridColor = "rgba(0,0,0,0.2)") {
@@ -644,6 +647,17 @@ class Canvas {
     const rect = new Rect(0, 0, this.width, this.height);
     rect.fillColor = this.fillColor;
     this.addChild(rect);
+  }
+
+  reset() {
+    this.initalInstructions.forEach((instruction) => {
+      let funcName = instruction[0] as string;
+      if (funcName.startsWith(".")) {
+        this._ctx[funcName.slice(1)] = instruction[1];
+      } else {
+        this._ctx[funcName].apply(this._ctx, instruction.slice(1));
+      }
+    });
   }
 
   _generateGrid(): any[] {
@@ -672,23 +686,29 @@ class Canvas {
     return gridInstructions;
   }
 
-  get instructions() {
-    let _instructions = [
+  get initalInstructions() {
+    let instructions = [
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
       [".fillStyle", this.fillColor],
       ["fillRect", 0, 0, this.width, this.height],
       [".globalCompositeOperation", "source-over"],
     ];
     if (this._showGrid) {
-      _instructions = _instructions.concat(this._generateGrid());
+      instructions = instructions.concat(this._generateGrid());
     }
+
+    return instructions;
+  }
+
+  get instructions() {
+    let instructions = this.initalInstructions;
 
     function iterChildren(children) {
       children.forEach((child) => {
         if (child.debug) {
           console.log(child.instructions);
         }
-        _instructions = _instructions.concat(child.instructions);
+        instructions = instructions.concat(child.instructions);
         if (child.children) {
           iterChildren(child.children);
         }
@@ -696,7 +716,7 @@ class Canvas {
     }
     iterChildren(this._children);
 
-    return _instructions;
+    return instructions;
   }
 
   render(onError = (e: Error) => {

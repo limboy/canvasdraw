@@ -52,6 +52,7 @@ async function tick() {
       canvas.width / devicePixelRatio,
       canvas.height / devicePixelRatio,
     );
+
     const payload = {
       uri: location.pathname + location.search,
       frame: __frame++,
@@ -61,21 +62,15 @@ async function tick() {
     } else {
       draw(__canvas, payload, __store, util);
     }
+
     if (
       parseInt(canvas.getAttribute("height")!) !==
       __canvas.height * devicePixelRatio
     ) {
-      __canvas.clear();
-      __store = {};
       canvas.setAttribute("height", __canvas.height * devicePixelRatio + "");
       canvas.setAttribute("width", __canvas.width * devicePixelRatio + "");
       canvas.style.height = __canvas.height + "px";
       canvas.style.width = __canvas.width + "px";
-      if (draw.constructor.name == "AsyncFunction") {
-        await draw(__canvas, payload, __store, util);
-      } else {
-        draw(__canvas, payload, __store, util);
-      }
     }
 
     __canvas.render((err: Error) => {
