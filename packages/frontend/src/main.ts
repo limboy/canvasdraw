@@ -170,7 +170,7 @@ function loadSnippetIfNeeded() {
         data.text()
       ).then((snippetId) => {
         shareBtn.disabled = false;
-        shareBtn.textContent = "Publishing";
+        shareBtn.textContent = "Publish";
         const url = location.protocol + "//" + location.host + "/render/" + snippetId;
         window.open(url, "_blank");
       });
