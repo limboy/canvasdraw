@@ -537,14 +537,14 @@ class Canvas {
   y: number;
   animate: boolean;
   screenshotFrame: number;
+  fillColor: string;
   fps: number;
+  width: number;
+  height: number;
 
   _children: Shape[];
   _showGrid: boolean;
-  _width: number;
-  _height: number;
   _ctx: CanvasRenderingContext2D;
-  _fillColor: string;
   _copyImageDataInstructions: any[];
   _cutImageDataInstructions: any[];
   _gridSize: number;
@@ -555,25 +555,17 @@ class Canvas {
     this.y = 0;
     this.screenshotFrame = 0;
     this.fps = 0;
+    this.fillColor = "white";
 
     this._children = [];
-    this._fillColor = "white";
     this._showGrid = false;
     this._copyImageDataInstructions = [];
     this._cutImageDataInstructions = [];
     this._ctx = ctx;
-    this._width = width;
-    this._height = height;
+    this.width = width;
+    this.height = height;
     this._gridSize = 100;
     this._gridColor = "rgba(0,0,0,0.2)";
-  }
-
-  set fillColor(color) {
-    this._fillColor = color;
-  }
-
-  get fillColor() {
-    return this._fillColor;
   }
 
   copyRectToPosition(
@@ -615,31 +607,19 @@ class Canvas {
   }
 
   get centerX() {
-    return Math.floor(this._width / 2);
+    return Math.floor(this.width / 2);
   }
 
   get centerY() {
-    return Math.floor(this._height / 2);
-  }
-
-  get width() {
-    return this._width;
-  }
-
-  set width(newWidth) {
-    this._width = newWidth;
-  }
-
-  get height() {
-    return this._height;
-  }
-
-  set height(newHeight) {
-    this._height = newHeight;
+    return Math.floor(this.height / 2);
   }
 
   get ctx() {
     return this._ctx;
+  }
+
+  blendMode(newMode: GlobalCompositeOperation) {
+    this._ctx.globalCompositeOperation = newMode;
   }
 
   showGrid(gridSize = 100, gridColor = "rgba(0,0,0,0.2)") {
@@ -662,7 +642,7 @@ class Canvas {
 
   clear() {
     const rect = new Rect(0, 0, this.width, this.height);
-    rect.fillColor = this._fillColor;
+    rect.fillColor = this.fillColor;
     this.addChild(rect);
   }
 
@@ -695,8 +675,8 @@ class Canvas {
   get instructions() {
     let _instructions = [
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
-      [".fillStyle", this._fillColor],
-      ["fillRect", 0, 0, this._width, this._height],
+      [".fillStyle", this.fillColor],
+      ["fillRect", 0, 0, this.width, this.height],
     ];
     if (this._showGrid) {
       _instructions = _instructions.concat(this._generateGrid());
@@ -766,7 +746,7 @@ class Canvas {
       if (clearRect.length > 0) {
         clearRect.forEach((rect) => {
           // don't use clearRect, it will lead to transparent when save as png
-          this._ctx.fillStyle = this._fillColor;
+          this._ctx.fillStyle = this.fillColor;
           this._ctx.fillRect.apply(this._ctx, rect);
         });
       }
