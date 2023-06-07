@@ -677,6 +677,7 @@ class Canvas {
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
       [".fillStyle", this.fillColor],
       ["fillRect", 0, 0, this.width, this.height],
+      [".globalCompositeOperation", "source-over"],
     ];
     if (this._showGrid) {
       _instructions = _instructions.concat(this._generateGrid());
