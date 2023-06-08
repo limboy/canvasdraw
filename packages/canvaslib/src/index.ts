@@ -535,7 +535,6 @@ class TextItem extends Shape {
 class Canvas {
   x: number;
   y: number;
-  animate: boolean;
   screenshotFrame: number;
   fillColor: string;
   fps: number;
