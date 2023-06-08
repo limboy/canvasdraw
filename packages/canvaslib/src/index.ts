@@ -540,6 +540,7 @@ class Canvas {
   fps: number;
   width: number;
   height: number;
+  keepPrevResult: boolean;
 
   _children: Shape[];
   _showGrid: boolean;
@@ -555,6 +556,7 @@ class Canvas {
     this.screenshotFrame = 0;
     this.fps = 0;
     this.fillColor = "white";
+    this.keepPrevResult = false;
 
     this._children = [];
     this._showGrid = false;
@@ -671,12 +673,15 @@ class Canvas {
 
   get initalInstructions() {
     let instructions = [
-      ["clearRect", 0, 0, this.width, this.height],
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
       [".fillStyle", this.fillColor],
-      ["fillRect", 0, 0, this.width, this.height],
       [".globalCompositeOperation", "source-over"],
     ];
+
+    if (!this.keepPrevResult) {
+      instructions.push(["clearRect", 0, 0, this.width, this.height]);
+    }
+
     if (this._showGrid) {
       instructions = instructions.concat(this._generateGrid());
     }
