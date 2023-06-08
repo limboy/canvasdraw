@@ -81,7 +81,7 @@ async function handleSnippet(snippetId, uri) {
   }
 
   if (needRedraw) {
-    _canvas.clear();
+    _canvas.reset();
     _drawCanvas(_canvas, { uri, frame }, {});
   }
 
@@ -106,26 +106,27 @@ async function handleSnippet(snippetId, uri) {
   globalThis["Image"] = Image;
 })()
 
-app.get("/render/:snippetId/([A-Za-z0-9_-]+).png", async (req, res) => {
-  const snippetId = req.params.snippetId;
-  const filename = imageFilenameForUri(req.originalUrl);
-  const imagePath = snippetImagesDir + "/" + filename;
-  if (!fs.existsSync(imagePath)) {
-    await handleSnippet(snippetId, req.originalUrl);
-  }
-  const options = {
-    root: snippetImagesDir,
-    dotfiles: 'deny',
-    headers: {
-      'content-type': "image/png",
-    }
-  }
-  res.sendFile(filename, options, function (err) {
-    if (err) {
-      console.log(err);
-    }
-  });
-})
+// util 参数不太好处理，先暂停这个 route
+// app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
+//   const snippetId = req.params.snippetId;
+//   const filename = imageFilenameForUri(req.originalUrl);
+//   const imagePath = snippetImagesDir + "/" + filename;
+//   if (!fs.existsSync(imagePath)) {
+//     await handleSnippet(snippetId, req.originalUrl);
+//   }
+//   const options = {
+//     root: snippetImagesDir,
+//     dotfiles: 'deny',
+//     headers: {
+//       'content-type': "image/png",
+//     }
+//   }
+//   res.sendFile(filename, options, function (err) {
+//     if (err) {
+//       console.log(err);
+//     }
+//   });
+// })
 
 app.get("/snippet/:snippetId", (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/code.html", "utf8");

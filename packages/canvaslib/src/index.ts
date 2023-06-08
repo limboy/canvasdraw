@@ -643,16 +643,16 @@ class Canvas {
     }
   }
 
-  // reset() {
-  //   this.initalInstructions.forEach((instruction) => {
-  //     let funcName = instruction[0] as string;
-  //     if (funcName.startsWith(".")) {
-  //       this._ctx[funcName.slice(1)] = instruction[1];
-  //     } else {
-  //       this._ctx[funcName].apply(this._ctx, instruction.slice(1));
-  //     }
-  //   });
-  // }
+  reset() {
+    this.initalInstructions.forEach((instruction) => {
+      let funcName = instruction[0] as string;
+      if (funcName.startsWith(".")) {
+        this._ctx[funcName.slice(1)] = instruction[1];
+      } else {
+        this._ctx[funcName].apply(this._ctx, instruction.slice(1));
+      }
+    });
+  }
 
   _generateGrid(): any[] {
     let stepSize = this._gridSize;
