@@ -575,15 +575,10 @@ class Canvas {
     newX: number,
     newY: number,
   ) {
-    this._copyImageDataInstructions.push([
-      "copyImageData",
-      x,
-      y,
-      width,
-      height,
-      newX,
-      newY,
-    ]);
+    const rect = new Rect(0, 0, 0, 0);
+    rect._canvas = this;
+    rect.appendInstruction(["copyImageData", x, y, width, height, newX, newY]);
+    this._children.push(rect);
   }
 
   cutRectToPosition(
@@ -594,15 +589,10 @@ class Canvas {
     newX: number,
     newY: number,
   ) {
-    this._cutImageDataInstructions.push([
-      "cutImageData",
-      x,
-      y,
-      width,
-      height,
-      newX,
-      newY,
-    ]);
+    const rect = new Rect(0, 0, 0, 0);
+    rect._canvas = this;
+    rect.appendInstruction(["cutImageData", x, y, width, height, newX, newY]);
+    this._children.push(rect);
   }
 
   get centerX() {
@@ -713,6 +703,33 @@ class Canvas {
     return instructions;
   }
 
+  cutImageData([x, y, width, height, newX, newY]: [number, number, number, number, number, number]) {
+    const instruction = [x, y, width, height, newX, newY];
+    this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    let data = instruction.map((value) => value * devicePixelRatio);
+    let imageData = this._ctx.getImageData(
+      data[0],
+      data[1],
+      data[2],
+      data[3],
+    );
+    this._ctx.clearRect(instruction[0], instruction[1], instruction[2], instruction[3]);
+    this._ctx.putImageData(imageData, data[4], data[5]);
+  }
+
+  copyImageData([x, y, width, height, newX, newY]: [number, number, number, number, number, number]) {
+    const instruction = [x, y, width, height, newX, newY];
+    this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    let data = instruction.map((value) => value * devicePixelRatio);
+    let imageData = this._ctx.getImageData(
+      data[0],
+      data[1],
+      data[2],
+      data[3],
+    );
+    this._ctx.putImageData(imageData, data[4], data[5]);
+  }
+
   render(onError = (e: Error) => {
     console.log(e.stack);
   }) {
@@ -722,54 +739,19 @@ class Canvas {
         if (funcName.startsWith(".")) {
           this._ctx[funcName.slice(1)] = instruction[1];
         } else {
-          this._ctx[funcName].apply(this._ctx, instruction.slice(1));
+          if (funcName === "copyImageData") {
+            const params = instruction.slice(1) as [number, number, number, number, number, number];
+            this.copyImageData(params);
+          } else if (funcName === "cutImageData") {
+            const params = instruction.slice(1) as [number, number, number, number, number, number];
+            this.cutImageData(params);
+          } else {
+            this._ctx[funcName].apply(this._ctx, instruction.slice(1));
+          }
         }
       });
     } catch (e) {
       onError(e);
-    }
-
-    if (
-      this._copyImageDataInstructions.length > 0 ||
-      this._cutImageDataInstructions.length > 0
-    ) {
-      this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-      const clearRect: any[] = [];
-      const pasteImages: any[] = [];
-      [this._copyImageDataInstructions, this._cutImageDataInstructions].flat()
-        .forEach((instruction) => {
-          const operation = instruction.shift();
-          let data = instruction.map((value) => value * devicePixelRatio);
-          let imageData = this._ctx.getImageData(
-            data[0],
-            data[1],
-            data[2],
-            data[3],
-          );
-
-          if (operation === "cutImageData") {
-            clearRect.push([
-              instruction[0],
-              instruction[1],
-              instruction[2],
-              instruction[3],
-            ]);
-          }
-          pasteImages.push([imageData, data[4], data[5]]);
-        });
-
-      if (clearRect.length > 0) {
-        clearRect.forEach((rect) => {
-          // don't use clearRect, it will lead to transparent when save as png
-          this._ctx.fillStyle = this.fillColor;
-          this._ctx.fillRect.apply(this._ctx, rect);
-        });
-      }
-      if (pasteImages) {
-        pasteImages.forEach((data) =>
-          this._ctx.putImageData.apply(this._ctx, data)
-        );
-      }
     }
   }
 }

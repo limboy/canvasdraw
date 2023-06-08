@@ -17,6 +17,7 @@
   <link href="/assets/codemirror.min.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="/assets/codemirror.min.js"></script>
   <script type="text/javascript" src="/assets/codemirror.mode.javascript.js"></script>
+  <script type="text/javascript" src="/assets/codemirror.addon.comment.js"></script>
   <title>CanvasDraw</title>
 </head>
 
@@ -52,6 +53,10 @@
       smartIndent: true,
       tabSize: 2,
       lineWrapping: true,
+      extraKeys: {
+        'Ctrl-/': (cm) => cm.execCommand('toggleComment'),
+        'Cmd-/': (cm) => cm.execCommand('toggleComment')
+      }
     });
 
     window.codeEditor.setValue(`// loading...`);
