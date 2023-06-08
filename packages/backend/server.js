@@ -106,7 +106,7 @@ async function handleSnippet(snippetId, uri) {
   globalThis["Image"] = Image;
 })()
 
-app.get("/snippet/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
+app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
   const snippetId = req.params.snippetId;
   const filename = imageFilenameForUri(req.originalUrl);
   const imagePath = snippetImagesDir + "/" + filename;
