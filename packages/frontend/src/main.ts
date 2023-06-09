@@ -86,6 +86,12 @@ async function tick() {
         __animationId = requestAnimationFrame(tick);
       }, Math.max(1000 / 60, 1000 / __canvas.fps));
     }
+
+    if (__canvas.redrawOnClick) {
+      canvas.addEventListener("click", tick);
+    } else {
+      canvas.removeEventListener("click", tick, false);
+    }
   }
 }
 
@@ -141,11 +147,6 @@ function loadSnippetIfNeeded() {
 }
 
 (function () {
-  addEventListener("resize", function () {
-    resizeCanvasDom();
-    tick();
-  });
-
   if (document.querySelector("#run")) {
     document.querySelector("#run")!.addEventListener("click", run);
 

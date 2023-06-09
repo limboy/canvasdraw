@@ -541,6 +541,7 @@ class Canvas {
   width: number;
   height: number;
   keepPrevResult: boolean;
+  redrawOnClick: boolean;
 
   _children: Shape[];
   _showGrid: boolean;
@@ -557,6 +558,7 @@ class Canvas {
     this.fps = 0;
     this.fillColor = "white";
     this.keepPrevResult = false;
+    this.redrawOnClick = false;
 
     this._children = [];
     this._showGrid = false;
