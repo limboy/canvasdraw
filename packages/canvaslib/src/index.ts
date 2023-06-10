@@ -556,7 +556,7 @@ class Canvas {
     this.y = 0;
     this.screenshotFrame = 0;
     this.fps = 0;
-    this.fillColor = "white";
+    this.fillColor = "";
     this.keepPrevResult = false;
     this.redrawOnClick = false;
 
@@ -676,12 +676,16 @@ class Canvas {
   get initalInstructions() {
     let instructions = [
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
-      [".fillStyle", this.fillColor],
       [".globalCompositeOperation", "source-over"],
     ];
 
     if (!this.keepPrevResult) {
       instructions.push(["clearRect", 0, 0, this.width, this.height]);
+    }
+
+    if (this.fillColor) {
+      instructions.push([".fillStyle", this.fillColor]);
+      instructions.push([".fillRect", 0, 0, this.width, this.height]);
     }
 
     if (this._showGrid) {
