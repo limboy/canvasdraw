@@ -685,7 +685,7 @@ class Canvas {
 
     if (this.fillColor) {
       instructions.push([".fillStyle", this.fillColor]);
-      instructions.push([".fillRect", 0, 0, this.width, this.height]);
+      instructions.push(["fillRect", 0, 0, this.width, this.height]);
     }
 
     if (this._showGrid) {
