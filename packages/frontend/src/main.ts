@@ -7,6 +7,7 @@ import util from './util';
 declare const codeEditor: {
   getValue: () => string;
   setValue: (newValue: string) => void;
+  state?: {};
 };
 
 let __frame = 0;
@@ -28,7 +29,9 @@ const canvasContainer = document.querySelector("#canvas-container")!;
 (function saveCodeContinously() {
   setInterval(() => {
     const code = codeEditor.getValue();
-    store.set("code", code);
+    if (codeEditor.state) {
+      store.set("code", code);
+    }
   }, 3000);
 })();
 
