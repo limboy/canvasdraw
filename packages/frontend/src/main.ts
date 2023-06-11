@@ -29,7 +29,7 @@ const canvasContainer = document.querySelector("#canvas-container")!;
 (function saveCodeContinously() {
   setInterval(() => {
     const code = codeEditor.getValue();
-    if (codeEditor.state) {
+    if (codeEditor.state && !document.hidden) {
       store.set("code", code);
     }
   }, 3000);
