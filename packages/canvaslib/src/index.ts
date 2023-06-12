@@ -15,11 +15,11 @@ abstract class Shape {
   y: number;
   parent?: Shape;
   rotateAnchor?: [number, number];
-  flipH: boolean;
-  flipV: boolean;
-  scale?: [number, number];
   debug: boolean;
 
+  _flipH: boolean;
+  _flipV: boolean;
+  _scale?: [number, number];
   _rotateAngle?: number;
   _mask?: Shape;
   _preInstructions: any[];
@@ -47,9 +47,9 @@ abstract class Shape {
     this.y = y;
     this.parent = undefined;
     this.rotateAnchor = undefined;
-    this.flipH = false;
-    this.flipV = false;
-    this.scale = undefined;
+    this._flipH = false;
+    this._flipV = false;
+    this._scale = undefined;
     this.debug = false;
 
     this._rotateAngle = undefined;
@@ -60,6 +60,33 @@ abstract class Shape {
   }
 
   abstract get instructions(): any[];
+
+  set flipH(flip: boolean) {
+    this._saveContext = !!flip;
+    this._flipH = flip;
+  }
+
+  get flipH() {
+    return this._flipH;
+  }
+
+  set flipV(flip: boolean) {
+    this._saveContext = !!flip;
+    this._flipV = flip;
+  }
+
+  get flipV() {
+    return this._flipV;
+  }
+
+  set scale(s: [number, number] | undefined) {
+    this._saveContext = !!s;
+    this._scale = s;
+  }
+
+  get scale() {
+    return this._scale;
+  }
 
   set mask(target: Shape | undefined) {
     this._mask = target;
@@ -336,6 +363,7 @@ class Polygon extends Shape {
     }
 
     let _instructions = super.preInstructions;
+    _instructions.push(["save"]);
     _instructions.push(["beginPath"]);
     _instructions.push([
       "translate",
@@ -363,6 +391,8 @@ class Polygon extends Shape {
     if (this.strokeColor) {
       _instructions.push(["stroke"]);
     }
+
+    _instructions.push(["restore"]);
 
     return _instructions.concat(super.postInstructions);
   }
