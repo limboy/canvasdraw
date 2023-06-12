@@ -15,11 +15,12 @@ abstract class Shape {
   y: number;
   parent?: Shape;
   rotateAnchor?: [number, number];
-  rotateAngle?: number;
   flipH: boolean;
   flipV: boolean;
   scale?: [number, number];
   debug: boolean;
+
+  _rotateAngle?: number;
   _mask?: Shape;
   _preInstructions: any[];
   _postInstructions: any[];
@@ -46,11 +47,12 @@ abstract class Shape {
     this.y = y;
     this.parent = undefined;
     this.rotateAnchor = undefined;
-    this.rotateAngle = undefined;
     this.flipH = false;
     this.flipV = false;
     this.scale = undefined;
     this.debug = false;
+
+    this._rotateAngle = undefined;
     this._mask = undefined;
     this._preInstructions = [];
     this._postInstructions = [];
@@ -66,6 +68,15 @@ abstract class Shape {
 
   get mask() {
     return this._mask;
+  }
+
+  set rotateAngle(angle: number | undefined) {
+    this._rotateAngle = angle;
+    this._saveContext = !!angle;
+  }
+
+  get rotateAngle() {
+    return this._rotateAngle;
   }
 
   get parentX() {
@@ -126,20 +137,22 @@ abstract class Shape {
       _instructions = _instructions.concat(maskInstructions);
     }
 
-    _instructions.push([
-      "setTransform",
-      devicePixelRatio,
-      0,
-      0,
-      devicePixelRatio,
-      0,
-      0,
-    ]);
+    // _instructions.push([
+    //   "setTransform",
+    //   devicePixelRatio,
+    //   0,
+    //   0,
+    //   devicePixelRatio,
+    //   0,
+    //   0,
+    // ]);
 
     if (this.rotateAngle) {
       let rotateAnchor = this.rotateAnchor;
       if (!rotateAnchor) {
         rotateAnchor = [this.x + this.parentX, this.y + this.parentY];
+      } else {
+        rotateAnchor = [this.x + this.parentX + rotateAnchor[0], this.y + this.parentY + rotateAnchor[1]];
       }
       _instructions.push(["translate", rotateAnchor[0], rotateAnchor[1]]);
       _instructions.push(["rotate", this.rotateAngle]);
@@ -700,10 +713,11 @@ class Canvas {
 
     function iterChildren(children) {
       children.forEach((child) => {
+        const childInstructions = child.instructions;
         if (child.debug) {
-          console.log(child.instructions);
+          console.log(childInstructions);
         }
-        instructions = instructions.concat(child.instructions);
+        instructions = instructions.concat(childInstructions);
         if (child.children) {
           iterChildren(child.children);
         }
