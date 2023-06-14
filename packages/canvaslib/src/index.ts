@@ -17,6 +17,8 @@ abstract class Shape {
   rotateAnchor?: [number, number];
   debug: boolean;
 
+  _blendModeForStroke?: GlobalCompositeOperation;
+  _blendModeForFill?: GlobalCompositeOperation;
   _flipH: boolean;
   _flipV: boolean;
   _scale?: [number, number];
@@ -52,6 +54,8 @@ abstract class Shape {
     this._scale = undefined;
     this.debug = false;
 
+    this._blendModeForFill = undefined;
+    this._blendModeForStroke = undefined;
     this._rotateAngle = undefined;
     this._mask = undefined;
     this._preInstructions = [];
@@ -132,6 +136,24 @@ abstract class Shape {
     return y;
   }
 
+  set blendModeForStroke(mode: GlobalCompositeOperation | undefined) {
+    this._saveContext = true;
+    this._blendModeForStroke = mode;
+  }
+
+  get blendModeForStroke() {
+    return this._blendModeForStroke;
+  }
+
+  set blendModeForFill(mode: GlobalCompositeOperation | undefined) {
+    this._saveContext = true;
+    this._blendModeForFill = mode;
+  }
+
+  get blendModeForFill() {
+    return this._blendModeForFill;
+  }
+
   get canvas(): Canvas {
     let topParent = this as Shape;
     let parent = this.parent;
@@ -163,16 +185,6 @@ abstract class Shape {
       maskInstructions.push(["clip"]);
       _instructions = _instructions.concat(maskInstructions);
     }
-
-    // _instructions.push([
-    //   "setTransform",
-    //   devicePixelRatio,
-    //   0,
-    //   0,
-    //   devicePixelRatio,
-    //   0,
-    //   0,
-    // ]);
 
     if (this.rotateAngle) {
       let rotateAnchor = this.rotateAnchor;
@@ -233,6 +245,30 @@ abstract class Shape {
     return this._postInstructions;
   }
 
+  fillIfNeeded(instructions: any[]) {
+    if (this.fillColor) {
+      if (this.blendModeForFill) {
+        instructions.push([".globalCompositeOperation", this.blendModeForFill]);
+      }
+      instructions.push(["fill"]);
+      if (this.blendModeForFill) {
+        instructions.push([".globalCompositeOperation", 'source-over']);
+      }
+    }
+  }
+
+  strokeIfNeeded(instructions: any[]) {
+    if (this.strokeColor) {
+      if (this.blendModeForStroke) {
+        instructions.push([".globalCompositeOperation", this.blendModeForStroke]);
+      }
+      instructions.push(["stroke"]);
+      if (this.blendModeForStroke) {
+        instructions.push([".globalCompositeOperation", 'source-over']);
+      }
+    }
+  }
+
   prependInstruction(instruction: any[]) {
     this._preInstructions.push(instruction.slice());
   }
@@ -287,13 +323,9 @@ class Circle extends Shape {
       this.startAngle,
       this.endAngle,
     ]);
-    if (this.fillColor) {
-      _instructions.push(["fill"]);
-    }
 
-    if (this.strokeColor) {
-      _instructions.push(["stroke"]);
-    }
+    this.fillIfNeeded(_instructions);
+    this.strokeIfNeeded(_instructions);
 
     return _instructions.concat(super.postInstructions);
   }
@@ -336,13 +368,9 @@ class Ellipse extends Shape {
       this.startAngle,
       this.endAngle,
     ]);
-    if (this.fillColor) {
-      _instructions.push(["fill"]);
-    }
 
-    if (this.strokeColor) {
-      _instructions.push(["stroke"]);
-    }
+    this.fillIfNeeded(_instructions);
+    this.strokeIfNeeded(_instructions);
 
     return _instructions.concat(super.postInstructions);
   }
@@ -384,13 +412,8 @@ class Polygon extends Shape {
 
     _instructions.push(["closePath"]);
 
-    if (this.fillColor) {
-      _instructions.push(["fill"]);
-    }
-
-    if (this.strokeColor) {
-      _instructions.push(["stroke"]);
-    }
+    this.fillIfNeeded(_instructions);
+    this.strokeIfNeeded(_instructions);
 
     _instructions.push(["restore"]);
 
@@ -448,13 +471,8 @@ class Rect extends Shape {
       ]);
     }
 
-    if (this.fillColor) {
-      _instructions.push(["fill"]);
-    }
-
-    if (this.strokeColor) {
-      _instructions.push(["stroke"]);
-    }
+    this.fillIfNeeded(_instructions);
+    this.strokeIfNeeded(_instructions);
 
     return _instructions.concat(super.postInstructions);
   }
@@ -521,13 +539,8 @@ class Path extends Shape {
       _instructions.push(instruction);
     });
 
-    if (this.strokeColor) {
-      _instructions.push(["stroke"]);
-    }
-
-    if (this.fillColor) {
-      _instructions.push(["fill"]);
-    }
+    this.fillIfNeeded(_instructions);
+    this.strokeIfNeeded(_instructions);
 
     return _instructions.concat(super.postInstructions);
   }
