@@ -8,7 +8,7 @@
 ![](canvasdraw.jpg)
 
 ### Try it now
-Go to https://canvasdraw.limboy.me to start drawing.
+Go to https://canvasdraw.limboy.me to start drawing. [Here are some examples](https://limboy.me/minimal/).
 
 ### Installation
 #### Requirements
