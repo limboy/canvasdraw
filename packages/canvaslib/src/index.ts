@@ -258,7 +258,7 @@ abstract class Shape {
   }
 
   strokeIfNeeded(instructions: any[]) {
-    if (this.strokeColor) {
+    if (this.strokeWeight > 0) {
       if (this.blendModeForStroke) {
         instructions.push([".globalCompositeOperation", this.blendModeForStroke]);
       }
