@@ -179,6 +179,7 @@ app.get("/render/*", async (req, res) => {
 
   res
     .header("content-type", "text/html")
+    .header("Cache-Control", "s-maxage=0") // to avoid cloudflare cache
     .send(htmlCnt)
 });
 
