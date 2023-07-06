@@ -4,7 +4,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 const { createCanvas, Image } = require('canvas')
-const CanvasItems = require("../canvaslib/dist");
+const CanvasItems = require("../yaoocanvas/dist");
 const distDir = __dirname + "/../frontend/dist";
 const baseUrl = process.env.NODE_ENV === "dev" ? "http://localhost:3727" : "https://canvasdraw.limboy.me"
 

@@ -1,6 +1,6 @@
 import "./style.css";
 // @ts-ignore
-import * as CanvasItems from "canvaslib";
+import * as CanvasItems from "../../yaoocanvas/dist";
 import store from "store2";
 import util from './util';
 
@@ -103,7 +103,8 @@ function run() {
   __codeErrMsg = "";
   error.classList.add("hidden");
   try {
-    let func = new Function("return " + codeEditor.getValue().trim());
+    const script = codeEditor.getValue().replaceAll(/^import .*$/gm, '');
+    let func = new Function("return " + script);
     (window as any)["draw"] = func();
   } catch (e: unknown) {
     if (e instanceof Error) {
