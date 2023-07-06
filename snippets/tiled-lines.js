@@ -1,3 +1,4 @@
+// just for code completion, will be removed when rendering
 import { Canvas, Ellipse, Circle, Path, Polygon, Rect, TextItem } from '../packages/yaoocanvas/dist'
 
 // view render result: https://canvasdraw.limboy.me/render/https://github.com/limboy/canvasdraw/raw/main/snippets/tiled-lines.js
