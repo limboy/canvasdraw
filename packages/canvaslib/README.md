@@ -1,4 +1,46 @@
+## Yet Another Object Oriented Canvas Library
+
 `CanvasRenderingContext2D` is powerful on drawing, but it's API is not user friendly, especially if you want to draw a bunch of stuff. this library make it easier to draw.
+
+## Usage
+
+you can try it on https://canvasdraw.limboy.me
+
+```js
+function draw(canvas, payload, store, util) {
+  canvas.width = Math.min(canvas.width, 400);
+  canvas.height = canvas.width;
+  canvas.redrawOnClick = true;
+  
+  const squaresPerRow = 20;
+  const squaresPerColumn = 20;
+  const squareSize = canvas.width / squaresPerRow;
+  
+  for (let i = 0; i < squaresPerRow; i++) {
+  	for (let j = 0; j < squaresPerColumn; j++) {
+      const square = new Rect(i * squareSize, j * squareSize, squareSize, squareSize);
+      canvas.addChild(square);
+      
+      const line = new Path(0,0);
+      line.strokeWeight = 2;
+      line.strokeColor = "black";
+      line.lineTo(squareSize, squareSize);
+      
+      if (Math.random() > 0.5) {
+      	line.rotateAnchor = [squareSize/2, squareSize/2];
+        line.rotateAngle = Math.PI/2;
+      }
+      square.addChild(line);
+    }
+  }
+}
+```
+
+![](https://pb.limboy.me/api/files/5bjm4lerlkz55pc/4qwwkd8oaidxlns/18UFnCyivDb_V39EoLQchG.webp)
+
+## API
+
+not fully writen down, you can inspect details in `src/index.ts`.
 
 ### Canvas
 ```js
