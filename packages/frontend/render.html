@@ -39,10 +39,14 @@
     }
 
     const url = new URL(location.href);
-    let snippetId = "";
+    let renderItem = "";
     if (url.pathname.indexOf("/render/") !== -1) {
-      snippetId = url.pathname.split("/")[2];
-      document.querySelector("#snippet").href = "/snippet/" + snippetId;
+      renderItem = url.pathname.replace("/render/", "");
+      if (renderItem.indexOf("//") !== -1) {
+        document.querySelector("#snippet").href = renderItem;
+      } else {
+        document.querySelector("#snippet").href = "/snippet/" + renderItem;
+      }
     }
 
     if (!url.searchParams.has("pure")) {
