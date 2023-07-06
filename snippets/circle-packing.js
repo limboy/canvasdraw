@@ -1,5 +1,7 @@
 import { Canvas, Ellipse, Circle, Path, Polygon, Rect, TextItem } from '../packages/yaoocanvas/dist'
 
+// view render result: https://canvasdraw.limboy.me/render/https://github.com/limboy/canvasdraw/raw/main/snippets/circle-packing.js
+
 /**
  * @typedef {Object} Noise
  * @property {(x: number, y: number) => number} simplex2
