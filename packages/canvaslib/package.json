@@ -1,7 +1,7 @@
 {
-  "name": "canvaslib",
+  "name": "yaoocanvas",
   "version": "0.8.0",
-  "description": "write canvas API in a friendly way",
+  "description": "Yet Another Object Oriented Canvas Library",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -17,8 +17,10 @@
     "watch": "pnpm run build -- --watch src",
     "prepublishOnly": "pnpm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "canvas"
+  ],
+  "author": "limboy",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^6.4.0"
