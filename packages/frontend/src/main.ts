@@ -126,7 +126,7 @@ function loadSnippetIfNeeded() {
     }
   }
 
-  if (codeEditor.getValue()) {
+  if (codeEditor.getValue() && codeEditor.getValue().indexOf("draw") !== -1) {
     run();
     return;
   }
