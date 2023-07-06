@@ -165,7 +165,7 @@ app.get("/render/:snippetId", async (req, res) => {
 });
 
 app.get("/render/*", async (req, res) => {
-  const scriptUrl = req.params[0];
+  const scriptUrl = req.url.replace("/render/", "");
   if (!isValidHttpUrl(scriptUrl)) {
     res.send("invalid js url");
     return;
