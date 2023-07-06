@@ -126,6 +126,11 @@ function loadSnippetIfNeeded() {
     }
   }
 
+  if (codeEditor.getValue()) {
+    run();
+    return;
+  }
+
   if (!snippetId) {
     const localCode = store.get("code");
     if (localCode) {

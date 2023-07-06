@@ -31,7 +31,8 @@
   </div>
 
   <script>
-    var _code = "";
+    let _code = '';
+
     const codeEditor = {
       getValue: () => _code,
       setValue: (newValue) => _code = newValue
@@ -47,6 +48,9 @@
     if (!url.searchParams.has("pure")) {
       document.querySelector("#snippet").style.display = "block";
     }
+
+    // this will be replaced by backend, don't change it.
+    // __REPLACE_ME__
 
   </script>
   <script type="module" src="/src/main.ts"></script>

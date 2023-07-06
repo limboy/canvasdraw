@@ -14,6 +14,18 @@ app.use('/assets', express.static(distDir + "/assets"));
 const port = 3727;
 const snippetImagesDir = __dirname + "/snippet-images";
 
+function isValidHttpUrl(string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
 function requestSnippet(snippetId) {
   return new Promise((resolve, reject) => {
     https.get("https://go.dev/_/share?id=" + snippetId, (resp) => {
@@ -128,6 +140,16 @@ async function handleSnippet(snippetId, uri) {
 //   });
 // })
 
+app.get("/snippet/:snippetId\.js", async (req, res) => {
+  const snippetId = req.params.snippetId;
+  const snippetUrl = "https://go.dev/_/share?id=" + snippetId;
+  const result = await fetch(snippetUrl);
+  const script = await result.text();
+  res
+    .header("content-type", "text/javascript")
+    .send(script);
+});
+
 app.get("/snippet/:snippetId", (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/code.html", "utf8");
   res
@@ -135,9 +157,26 @@ app.get("/snippet/:snippetId", (req, res) => {
     .send(htmlCnt)
 });
 
-app.get("/render/:snippetId", (req, res) => {
+app.get("/render/:snippetId", async (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/render.html", "utf8");
-  htmlCnt = htmlCnt.replaceAll("https://canvasdraw.limboy.me/assets/og.jpg", baseUrl + "/snippet/" + req.params.snippetId + ".png");
+  res
+    .header("content-type", "text/html")
+    .send(htmlCnt)
+});
+
+app.get("/render/*", async (req, res) => {
+  const scriptUrl = req.params[0];
+  if (!isValidHttpUrl(scriptUrl)) {
+    res.send("invalid js url");
+    return;
+  }
+
+  const result = await fetch(scriptUrl);
+  const script = (await result.text()).replaceAll(/^import .*$/gm, '');
+
+  let htmlCnt = fs.readFileSync(distDir + "/render.html", "utf8");
+  htmlCnt = htmlCnt.replace("// __REPLACE_ME__", `${script};\n\n_code=draw.toString();\n`);
+
   res
     .header("content-type", "text/html")
     .send(htmlCnt)
