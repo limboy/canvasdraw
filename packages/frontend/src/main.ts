@@ -176,7 +176,11 @@ function loadSnippetIfNeeded() {
       shareBtn.textContent = "Publishing...";
       const snippet = codeEditor.getValue();
       const postUrl = "https://corsproxy.limboy.me/https://go.dev/_/share";
-      fetch(postUrl, { method: "POST", body: snippet }).then((data) =>
+      fetch(postUrl, {
+        method: "POST", body: snippet, headers: {
+          "Origin": "https://go.dev"
+        }
+      }).then((data) =>
         data.text()
       ).then((snippetId) => {
         shareBtn.disabled = false;
