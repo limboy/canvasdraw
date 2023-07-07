@@ -103,9 +103,11 @@ function run() {
   __codeErrMsg = "";
   error.classList.add("hidden");
   try {
-    const script = codeEditor.getValue().replaceAll(/^import .*$/gm, '');
-    let func = new Function("return " + script);
-    (window as any)["draw"] = func();
+    const script = codeEditor.getValue().replaceAll(/^import .*$/gm, '') + ";window.draw = draw";
+    eval(script);
+    // if use new Function, if there's any comment above function, it will fail.
+    // let func = new Function("return " + script);
+    // (window as any)["draw"] = func();
   } catch (e: unknown) {
     if (e instanceof Error) {
       __codeErrMsg = e.message + "\n" + e.stack;
