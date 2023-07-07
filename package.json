@@ -5,7 +5,7 @@
   "description": "draw with code",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm run --filter yaoocanvas build && pnpm run --filter frontend build",
+    "build": "pnpm run --filter utils build && pnpm run --filter yaoocanvas build && pnpm run --filter frontend build",
     "dev": "pnpm run --filter backend dev",
     "serve": "pnpm run --filter backend serve",
     "snippets": "npx http-server -p 1273 snippets/"

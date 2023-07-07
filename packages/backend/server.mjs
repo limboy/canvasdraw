@@ -1,10 +1,16 @@
-const express = require("express");
-const https = require('https');
-const fs = require('fs');
-const crypto = require('crypto');
-const fetch = require('node-fetch');
-const { createCanvas, Image } = require('canvas')
-const CanvasItems = require("../yaoocanvas/dist");
+import express from "express";
+import * as https from 'https';
+import fs from "fs"
+import fetch from 'node-fetch';
+import * as url from 'url';
+import { createCanvas, Image } from "canvas";
+import * as CanvasItems from "../yaoocanvas/dist/index.mjs";
+import util from '../utils/dist/index.mjs';
+
+const { createHash, } = await import('node:crypto');
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
 const distDir = __dirname + "/../frontend/dist";
 const baseUrl = process.env.NODE_ENV === "dev" ? "http://localhost:3727" : "https://canvasdraw.limboy.me"
 
@@ -45,14 +51,18 @@ function requestSnippet(snippetId) {
 }
 
 function imageFilenameForUri(uri) {
-  return crypto.createHash('md5').update(uri).digest("hex") + ".png";
+  return createHash('md5').update(uri).digest("hex") + ".png";
 }
 
 async function handleSnippet(snippetId, uri) {
-  const snippet = await requestSnippet(snippetId);
+  let snippet = await requestSnippet(snippetId);
   if (snippet.trim() === "Snippet not found") {
     return;
   }
+  // remove imports
+  snippet = snippet.replaceAll(/^import .*$/gm, '');
+  // remove comments;
+  snippet = snippet.replace(/\/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*|^\/\/.*/g, '');
   const filename = imageFilenameForUri(uri);
   const defaultCanvasWidth = 800;
   const defaultCanvasHeight = 800;
@@ -66,9 +76,9 @@ async function handleSnippet(snippetId, uri) {
 
   async function _drawCanvas(target, payload, store) {
     if (globalThis["draw"].constructor.name == 'AsyncFunction') {
-      await globalThis["draw"](target, payload, store);
+      await globalThis["draw"](target, payload, store, util);
     } else {
-      globalThis["draw"](target, payload, store);
+      globalThis["draw"](target, payload, store, util);
     }
   }
 
@@ -118,27 +128,26 @@ async function handleSnippet(snippetId, uri) {
   globalThis["Image"] = Image;
 })()
 
-// util 参数不太好处理，先暂停这个 route
-// app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
-//   const snippetId = req.params.snippetId;
-//   const filename = imageFilenameForUri(req.originalUrl);
-//   const imagePath = snippetImagesDir + "/" + filename;
-//   if (!fs.existsSync(imagePath)) {
-//     await handleSnippet(snippetId, req.originalUrl);
-//   }
-//   const options = {
-//     root: snippetImagesDir,
-//     dotfiles: 'deny',
-//     headers: {
-//       'content-type': "image/png",
-//     }
-//   }
-//   res.sendFile(filename, options, function (err) {
-//     if (err) {
-//       console.log(err);
-//     }
-//   });
-// })
+app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
+  const snippetId = req.params.snippetId;
+  const filename = imageFilenameForUri(req.originalUrl);
+  const imagePath = snippetImagesDir + "/" + filename;
+  if (!fs.existsSync(imagePath)) {
+    await handleSnippet(snippetId, req.originalUrl);
+  }
+  const options = {
+    root: snippetImagesDir,
+    dotfiles: 'deny',
+    headers: {
+      'content-type': "image/png",
+    }
+  }
+  res.sendFile(filename, options, function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+})
 
 app.get("/snippet/:snippetId\.js", async (req, res) => {
   const snippetId = req.params.snippetId;
