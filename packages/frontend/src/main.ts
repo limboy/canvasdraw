@@ -123,7 +123,7 @@ function loadSnippetIfNeeded() {
     }
 
     if (url.pathname.indexOf("/render/") !== -1) {
-      snippetId = url.pathname.split("/")[2];
+      snippetId = url.pathname.replace("/render/", "") + url.search;
     }
   }
 
@@ -143,8 +143,11 @@ function loadSnippetIfNeeded() {
     }
   }
 
-  const snippetUrl = "https://corsproxy.limboy.me/" +
-    "https://go.dev/_/share?id=" + snippetId;
+  let snippetUrlPrefix = "";
+  if (snippetId.indexOf("//") === -1) {
+    snippetUrlPrefix = "https://corsproxy.limboy.me/https://go.dev/_/share?id="
+  }
+  const snippetUrl = snippetUrlPrefix + snippetId;
   fetch(snippetUrl).then((data) => data.text()).then((result) => {
     codeEditor.setValue(result);
     run();

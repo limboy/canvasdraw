@@ -171,11 +171,15 @@ app.get("/render/*", async (req, res) => {
     return;
   }
 
-  const result = await fetch(scriptUrl);
-  const script = (await result.text()).replaceAll(/^import .*$/gm, '');
+  const devHosts = ["127.0.0.1", "localhost"];
+  const host = new URL(scriptUrl).hostname;
 
   let htmlCnt = fs.readFileSync(distDir + "/render.html", "utf8");
-  htmlCnt = htmlCnt.replace("// __REPLACE_ME__", `${script};\n\n_code=draw.toString();\n`);
+  if (devHosts.indexOf(host) === -1) {
+    const result = await fetch(scriptUrl);
+    const script = (await result.text()).replaceAll(/^import .*$/gm, '');
+    htmlCnt = htmlCnt.replace("// __REPLACE_ME__", `${script};\n\n_code=draw.toString();\n`);
+  }
 
   res
     .header("content-type", "text/html")
