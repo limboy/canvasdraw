@@ -168,6 +168,7 @@ app.get("/snippet/:snippetId", (req, res) => {
 
 app.get("/render/:snippetId", async (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/render.html", "utf8");
+  htmlCnt = htmlCnt.replaceAll('__OG_IMAGE__', baseUrl + "/render/" + req.params.snippetId + ".png");
   res
     .header("content-type", "text/html")
     .send(htmlCnt)
