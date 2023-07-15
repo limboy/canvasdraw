@@ -447,7 +447,7 @@ class Rect extends Shape {
       ? "roundRect"
       : "rect";
     // Safari doesn't support roundRect until iOS 16
-    if (this.canvas.ctx && !this.canvas.ctx["roundRect"]) {
+    if (this.canvas && this.canvas.ctx && !this.canvas.ctx["roundRect"]) {
       action = "rect";
     }
 
@@ -602,8 +602,6 @@ class Canvas {
   _children: Shape[];
   _showGrid: boolean;
   _ctx: CanvasRenderingContext2D;
-  _copyImageDataInstructions: any[];
-  _cutImageDataInstructions: any[];
   _gridSize: number;
   _gridColor: string;
 
@@ -618,8 +616,6 @@ class Canvas {
 
     this._children = [];
     this._showGrid = false;
-    this._copyImageDataInstructions = [];
-    this._cutImageDataInstructions = [];
     this._ctx = ctx;
     this.width = width;
     this.height = height;
@@ -637,7 +633,7 @@ class Canvas {
   ) {
     const rect = new Rect(0, 0, 0, 0);
     rect._canvas = this;
-    rect.appendInstruction(["copyImageData", x, y, width, height, newX, newY]);
+    rect.appendInstruction(["_copyImageDataToPosition", x, y, width, height, newX, newY]);
     this._children.push(rect);
   }
 
@@ -651,7 +647,7 @@ class Canvas {
   ) {
     const rect = new Rect(0, 0, 0, 0);
     rect._canvas = this;
-    rect.appendInstruction(["cutImageData", x, y, width, height, newX, newY]);
+    rect.appendInstruction(["_cutImageDataToPosition", x, y, width, height, newX, newY]);
     this._children.push(rect);
   }
 
@@ -771,7 +767,27 @@ class Canvas {
     return instructions;
   }
 
-  cutImageData([x, y, width, height, newX, newY]: [number, number, number, number, number, number]) {
+  getImageData(x: number, y: number, width: number, height: number, callback: (imageData: ImageData) => void) {
+    const rect = new Rect(0, 0, 0, 0);
+    rect._canvas = this;
+    rect.appendInstruction(["_getImageData", x, y, width, height, callback]);
+    this._children.push(rect);
+  }
+
+  _getImageData(x: number, y: number, width: number, height: number, callback: (imageData: ImageData) => void) {
+    const instruction = [x, y, width, height];
+    this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    let data = instruction.map((value) => value * devicePixelRatio);
+    const imageData = this._ctx.getImageData(
+      data[0],
+      data[1],
+      data[2],
+      data[3],
+    );
+    callback(imageData);
+  }
+
+  _cutImageDataToPosition(x: number, y: number, width: number, height: number, newX: number, newY: number) {
     const instruction = [x, y, width, height, newX, newY];
     this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     let data = instruction.map((value) => value * devicePixelRatio);
@@ -785,7 +801,7 @@ class Canvas {
     this._ctx.putImageData(imageData, data[4], data[5]);
   }
 
-  copyImageData([x, y, width, height, newX, newY]: [number, number, number, number, number, number]) {
+  _copyImageDataToPosition(x: number, y: number, width: number, height: number, newX: number, newY: number) {
     const instruction = [x, y, width, height, newX, newY];
     this._ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     let data = instruction.map((value) => value * devicePixelRatio);
@@ -807,12 +823,15 @@ class Canvas {
         if (funcName.startsWith(".")) {
           this._ctx[funcName.slice(1)] = instruction[1];
         } else {
-          if (funcName === "copyImageData") {
+          if (funcName === "_copyImageDataToPosition") {
             const params = instruction.slice(1) as [number, number, number, number, number, number];
-            this.copyImageData(params);
-          } else if (funcName === "cutImageData") {
+            this._copyImageDataToPosition(...params);
+          } else if (funcName === "_cutImageDataToPosition") {
             const params = instruction.slice(1) as [number, number, number, number, number, number];
-            this.cutImageData(params);
+            this._cutImageDataToPosition(...params);
+          } else if (funcName === "_getImageData") {
+            const params = instruction.slice(1) as [number, number, number, number, (imageData: ImageData) => void];
+            this._getImageData(...params);
           } else {
             this._ctx[funcName].apply(this._ctx, instruction.slice(1));
           }
