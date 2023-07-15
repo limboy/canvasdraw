@@ -64,8 +64,8 @@ async function handleSnippet(snippetId, uri) {
   // remove comments;
   snippet = snippet.replace(/\/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*|^\/\/.*/g, '');
   const filename = imageFilenameForUri(uri);
-  const defaultCanvasWidth = 800;
-  const defaultCanvasHeight = 800;
+  const defaultCanvasWidth = 400;
+  const defaultCanvasHeight = 400;
 
   function _createCanvas(width, height) {
     let canvas = createCanvas(width, height);
@@ -85,7 +85,7 @@ async function handleSnippet(snippetId, uri) {
   let _func = new Function("return " + snippet.trim());
   globalThis["draw"] = _func();
 
-  let canvas = _createCanvas(defaultCanvasWidth, defaultCanvasHeight);
+  let canvas = _createCanvas(defaultCanvasWidth * devicePixelRatio, defaultCanvasHeight * devicePixelRatio);
   let needRedraw = false;
 
   let _canvas = new globalThis["Canvas"](canvas.getContext('2d'), canvas.width, canvas.height);
@@ -123,7 +123,7 @@ async function handleSnippet(snippetId, uri) {
     globalThis[itemKey] = CanvasItems[itemKey];
   }
 
-  globalThis["devicePixelRatio"] = 2;
+  globalThis["devicePixelRatio"] = 1;
   globalThis["fetch"] = fetch;
   globalThis["Image"] = Image;
 })()
@@ -132,7 +132,7 @@ app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
   const snippetId = req.params.snippetId;
   const filename = imageFilenameForUri(req.originalUrl);
   const imagePath = snippetImagesDir + "/" + filename;
-  if (!fs.existsSync(imagePath)) {
+  if (!fs.existsSync(imagePath) || process.env.NODE_ENV === "dev") {
     await handleSnippet(snippetId, req.originalUrl);
   }
   const options = {
@@ -149,15 +149,15 @@ app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
   });
 })
 
-app.get("/snippet/:snippetId\.js", async (req, res) => {
-  const snippetId = req.params.snippetId;
-  const snippetUrl = "https://go.dev/_/share?id=" + snippetId;
-  const result = await fetch(snippetUrl);
-  const script = await result.text();
-  res
-    .header("content-type", "text/javascript")
-    .send(script);
-});
+// app.get("/snippet/:snippetId\.js", async (req, res) => {
+//   const snippetId = req.params.snippetId;
+//   const snippetUrl = "https://go.dev/_/share?id=" + snippetId;
+//   const result = await fetch(snippetUrl);
+//   const script = await result.text();
+//   res
+//     .header("content-type", "text/javascript")
+//     .send(script);
+// });
 
 app.get("/snippet/:snippetId", (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
