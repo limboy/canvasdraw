@@ -123,7 +123,7 @@ function loadSnippetIfNeeded() {
   let snippetId = url.searchParams.get("snippet");
   if (!snippetId) {
     if (url.pathname.indexOf("/snippet/") !== -1) {
-      snippetId = url.pathname.split("/")[2];
+      snippetId = url.pathname.replace("/snippet/", "") + url.search;
     }
 
     if (url.pathname.indexOf("/render/") !== -1) {

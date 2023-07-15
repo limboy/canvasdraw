@@ -160,7 +160,29 @@ app.get("/snippet/:snippetId\.js", async (req, res) => {
 });
 
 app.get("/snippet/:snippetId", (req, res) => {
-  let htmlCnt = fs.readFileSync(distDir + "/code.html", "utf8");
+  let htmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
+  res
+    .header("content-type", "text/html")
+    .send(htmlCnt)
+});
+
+app.get("/snippet/*", async (req, res) => {
+  const scriptUrl = req.url.replace("/snippet/", "");
+  if (!isValidHttpUrl(scriptUrl)) {
+    res.send("invalid js url");
+    return;
+  }
+
+  const devHosts = ["127.0.0.1", "localhost"];
+  const host = new URL(scriptUrl).hostname;
+
+  let htmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
+  if (devHosts.indexOf(host) === -1) {
+    const result = await fetch(scriptUrl);
+    const script = (await result.text()).replaceAll(/^import .*$/gm, '');
+    htmlCnt = htmlCnt.replace("// __REPLACE_ME__", `${script};\n\ncodeEditor.setValue(draw.toString());\n`);
+  }
+
   res
     .header("content-type", "text/html")
     .send(htmlCnt)

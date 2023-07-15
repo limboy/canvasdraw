@@ -42,11 +42,7 @@
     let renderItem = "";
     if (url.pathname.indexOf("/render/") !== -1) {
       renderItem = url.pathname.replace("/render/", "");
-      if (renderItem.indexOf("//") !== -1) {
-        document.querySelector("#snippet").href = renderItem;
-      } else {
-        document.querySelector("#snippet").href = "/snippet/" + renderItem;
-      }
+      document.querySelector("#snippet").href = "/snippet/" + renderItem;
     }
 
     if (!url.searchParams.has("pure")) {
