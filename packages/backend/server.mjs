@@ -88,12 +88,12 @@ async function handleSnippet(snippetId, uri) {
   let canvas = _createCanvas(defaultCanvasWidth * devicePixelRatio, defaultCanvasHeight * devicePixelRatio);
   let needRedraw = false;
 
-  let _canvas = new globalThis["Canvas"](canvas.getContext('2d'), canvas.width, canvas.height);
+  let _canvas = new globalThis["Canvas"](canvas.getContext('2d'), defaultCanvasWidth, defaultCanvasHeight);
   _drawCanvas(_canvas, { uri, frame: 0 }, {});
 
   if (_canvas.width !== defaultCanvasWidth) {
     canvas = _createCanvas(_canvas.width * devicePixelRatio, _canvas.height * devicePixelRatio);
-    _canvas = new globalThis["Canvas"](canvas.getContext('2d'), canvas.width, canvas.height);
+    _canvas = new globalThis["Canvas"](canvas.getContext('2d'), _canvas.width, _canvas.height);
     needRedraw = true;
   }
 
@@ -123,7 +123,7 @@ async function handleSnippet(snippetId, uri) {
     globalThis[itemKey] = CanvasItems[itemKey];
   }
 
-  globalThis["devicePixelRatio"] = 1;
+  globalThis["devicePixelRatio"] = 2;
   globalThis["fetch"] = fetch;
   globalThis["Image"] = Image;
 })()
@@ -148,16 +148,6 @@ app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
     }
   });
 })
-
-// app.get("/snippet/:snippetId\.js", async (req, res) => {
-//   const snippetId = req.params.snippetId;
-//   const snippetUrl = "https://go.dev/_/share?id=" + snippetId;
-//   const result = await fetch(snippetUrl);
-//   const script = await result.text();
-//   res
-//     .header("content-type", "text/javascript")
-//     .send(script);
-// });
 
 app.get("/snippet/:snippetId", (req, res) => {
   let htmlCnt = fs.readFileSync(distDir + "/index.html", "utf8");
