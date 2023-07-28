@@ -1,6 +1,6 @@
 {
   "name": "yaoocanvas",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Yet Another Object Oriented Canvas Library",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
