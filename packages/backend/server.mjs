@@ -56,6 +56,7 @@ function imageFilenameForUri(uri) {
 }
 
 async function handleSnippet(snippetId, uri) {
+  console.log(snippetId);
   let snippet = await requestSnippet(snippetId);
   if (snippet.trim() === "Snippet not found") {
     return;
@@ -78,6 +79,7 @@ async function handleSnippet(snippetId, uri) {
   async function _drawCanvas(target, payload, store) {
     if (globalThis["draw"].constructor.name == 'AsyncFunction') {
       await globalThis["draw"](target, payload, store, util);
+      await setTimeout(1000);
     } else {
       globalThis["draw"](target, payload, store, util);
     }
@@ -90,7 +92,7 @@ async function handleSnippet(snippetId, uri) {
   let needRedraw = false;
 
   let _canvas = new globalThis["Canvas"](canvas.getContext('2d'), defaultCanvasWidth, defaultCanvasHeight);
-  _drawCanvas(_canvas, { uri, frame: 0 }, {});
+  await _drawCanvas(_canvas, { uri, frame: 0 }, {});
 
   if (_canvas.width !== defaultCanvasWidth) {
     canvas = _createCanvas(_canvas.width * devicePixelRatio, _canvas.height * devicePixelRatio);
@@ -105,12 +107,9 @@ async function handleSnippet(snippetId, uri) {
 
   if (needRedraw) {
     _canvas.reset();
-    _drawCanvas(_canvas, { uri, frame }, {});
+    await _drawCanvas(_canvas, { uri, frame }, {});
   }
 
-  if (globalThis["draw"].constructor.name == 'AsyncFunction') {
-    await setTimeout(5000);
-  }
   _canvas.render();
 
   const buf = canvas.toBuffer('image/png', { compressionLevel: 3, filters: canvas.PNG_FILTER_NONE })
