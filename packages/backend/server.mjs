@@ -1,5 +1,6 @@
 import express from "express";
 import * as https from 'https';
+import { setTimeout } from 'timers/promises';
 import fs from "fs"
 import fetch from 'node-fetch';
 import * as url from 'url';
@@ -107,6 +108,9 @@ async function handleSnippet(snippetId, uri) {
     _drawCanvas(_canvas, { uri, frame }, {});
   }
 
+  if (globalThis["draw"].constructor.name == 'AsyncFunction') {
+    await setTimeout(5000);
+  }
   _canvas.render();
 
   const buf = canvas.toBuffer('image/png', { compressionLevel: 3, filters: canvas.PNG_FILTER_NONE })
