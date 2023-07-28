@@ -688,6 +688,13 @@ class Canvas {
     }
   }
 
+  addBlock(block: () => void) {
+    const rect = new Rect(0, 0, 0, 0);
+    rect._canvas = this;
+    rect.appendInstruction(["_triggerBlock", block]);
+    this._children.push(rect);
+  }
+
   reset() {
     this.initalInstructions.forEach((instruction) => {
       let funcName = instruction[0] as string;
@@ -726,7 +733,7 @@ class Canvas {
   }
 
   get initalInstructions() {
-    let instructions = [
+    let instructions: Array<Array<string | number | Function>> = [
       ["setTransform", devicePixelRatio, 0, 0, devicePixelRatio, 0, 0],
       [".globalCompositeOperation", "source-over"],
     ];
@@ -832,7 +839,11 @@ class Canvas {
           } else if (funcName === "_getImageData") {
             const params = instruction.slice(1) as [number, number, number, number, (imageData: ImageData) => void];
             this._getImageData(...params);
-          } else {
+          } else if (funcName === "_triggerBlock") {
+            const block = instruction[1] as () => void;
+            block();
+          }
+          else {
             this._ctx[funcName].apply(this._ctx, instruction.slice(1));
           }
         }
