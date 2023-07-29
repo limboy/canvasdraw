@@ -15,6 +15,8 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const distDir = __dirname + "/../frontend/dist";
 const baseUrl = process.env.NODE_ENV === "dev" ? "http://localhost:3727" : "https://canvasdraw.limboy.me"
 
+registerFont('SourceHanSans-VF.ttf', { family: 'SourceHanSans' })
+
 const app = express();
 app.use('/assets', express.static(distDir + "/assets"));
 
@@ -56,7 +58,6 @@ function imageFilenameForUri(uri) {
 }
 
 async function handleSnippet(snippetId, uri) {
-  console.log(snippetId);
   let snippet = await requestSnippet(snippetId);
   if (snippet.trim() === "Snippet not found") {
     return;
