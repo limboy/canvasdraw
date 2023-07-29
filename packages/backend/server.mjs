@@ -1,7 +1,7 @@
 import express from "express";
 import * as https from 'https';
 import { setTimeout } from 'timers/promises';
-import fs from "fs"
+import * as fs from "fs"
 import fetch from 'node-fetch';
 import * as url from 'url';
 import { registerFont, createCanvas, Image } from "canvas";
@@ -21,7 +21,7 @@ const app = express();
 app.use('/assets', express.static(distDir + "/assets"));
 
 const port = 3727;
-const snippetImagesDir = __dirname + "/snippet-images";
+const snippetImagesDir = __dirname.replace(/\/$/, "") + "/snippet-images";
 
 function isValidHttpUrl(string) {
   let url;
@@ -133,6 +133,15 @@ async function handleSnippet(snippetId, uri) {
 })()
 
 app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
+
+  if (fs.existsSync(snippetImagesDir)) {
+    fs.readdir(snippetImagesDir, (err, files) => {
+      if (files.length >= 1000) {
+        fs.rmSync(snippetImagesDir, { recursive: true, force: true });
+      }
+    });
+  }
+
   const snippetId = req.params.snippetId;
   const filename = imageFilenameForUri(req.originalUrl);
   const imagePath = snippetImagesDir + "/" + filename;
@@ -143,7 +152,7 @@ app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
     root: snippetImagesDir,
     dotfiles: 'deny',
     immutable: true,
-    maxAge: 1000000,
+    maxAge: 10000000,
     headers: {
       'content-type': "image/png",
     }
