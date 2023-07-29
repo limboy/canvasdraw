@@ -4,7 +4,7 @@ import { setTimeout } from 'timers/promises';
 import fs from "fs"
 import fetch from 'node-fetch';
 import * as url from 'url';
-import { createCanvas, Image } from "canvas";
+import { registerFont, createCanvas, Image } from "canvas";
 import * as CanvasItems from "../yaoocanvas/dist/index.mjs";
 import util from '../utils/dist/index.mjs';
 
@@ -141,6 +141,8 @@ app.get("/render/:snippetId([A-Za-z0-9_-]+).png", async (req, res) => {
   const options = {
     root: snippetImagesDir,
     dotfiles: 'deny',
+    immutable: true,
+    maxAge: 1000000,
     headers: {
       'content-type': "image/png",
     }
