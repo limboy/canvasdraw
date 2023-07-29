@@ -61,23 +61,29 @@ function splitText({
   text,
   width,
 }: STProps): string[] {
-  // 字符分隔为数组
-  var arrText = text.split('');
-  const result = [];
-  var line = '';
 
-  for (var n = 0; n < arrText.length; n++) {
-    var testLine = line + arrText[n];
-    var metrics = ctx.measureText(testLine);
-    var testWidth = metrics.width;
-    if (testWidth > width && n > 0) {
-      result.push(line);
-      line = arrText[n];
-    } else {
-      line = testLine;
+  const initialTextArray = text.split('\n')
+  const result = [];
+
+  for (let i = 0; i < initialTextArray.length; i++) {
+    const curText = initialTextArray[i];
+    let arrText = curText.split('');
+    let line = '';
+
+    for (var n = 0; n < arrText.length; n++) {
+      let testLine = line + arrText[n];
+      let metrics = ctx.measureText(testLine);
+      let testWidth = metrics.width;
+      if (testWidth > width && n > 0) {
+        result.push(line);
+        line = arrText[n];
+      } else {
+        line = testLine;
+      }
     }
+    result.push(line);
   }
-  result.push(line);
+
   return result;
 }
 
