@@ -47,7 +47,7 @@
 //   return justifiedText
 // }
 
-// Hair space character for precise justification
+// // Hair space character for precise justification
 // const SPACE = '\u{200a}'
 
 interface STProps {
@@ -61,6 +61,10 @@ function splitText({
   text,
   width,
 }: STProps): string[] {
+
+  if (text.match(/^[a-z0-9_.,'"!?;:& \n\t]+$/i)) {
+    return splitTextInEnglish({ ctx, text, width });
+  }
 
   const initialTextArray = text.split('\n')
   const result = [];
@@ -87,128 +91,109 @@ function splitText({
   return result;
 }
 
-// function splitText({
-//   ctx,
-//   text,
-//   justify,
-//   width,
-// }: STProps): string[] {
-//   const textMap = new Map<string, number>()
+function splitTextInEnglish({
+  ctx,
+  text,
+  width,
+}: STProps): string[] {
+  const textMap = new Map<string, number>()
 
-//   const measureText = (text: string): number => {
-//     let width = textMap.get(text)
-//     if (width !== undefined) {
-//       return width
-//     }
+  const measureText = (text: string): number => {
+    let width = textMap.get(text)
+    if (width !== undefined) {
+      return width
+    }
 
-//     width = ctx.measureText(text).width
-//     textMap.set(text, width)
-//     return width
-//   }
+    width = ctx.measureText(text).width
+    textMap.set(text, width)
+    return width
+  }
 
-//   let textArray: string[] = []
-//   let initialTextArray = text.split('\n')
+  let textArray: string[] = []
+  let initialTextArray = text.split('\n')
 
-//   const spaceWidth = justify ? measureText(SPACE) : 0
+  let index = 0
+  let averageSplitPoint = 0
+  for (const singleLine of initialTextArray) {
+    let textWidth = measureText(singleLine)
+    const singleLineLength = singleLine.length
 
-//   let index = 0
-//   let averageSplitPoint = 0
-//   for (const singleLine of initialTextArray) {
-//     let textWidth = measureText(singleLine)
-//     const singleLineLength = singleLine.length
+    if (textWidth <= width) {
+      textArray.push(singleLine)
+      continue
+    }
 
-//     if (textWidth <= width) {
-//       textArray.push(singleLine)
-//       continue
-//     }
+    let tempLine = singleLine
 
-//     let tempLine = singleLine
+    let splitPoint
+    let splitPointWidth
+    let textToPrint = ''
 
-//     let splitPoint
-//     let splitPointWidth
-//     let textToPrint = ''
+    while (textWidth > width) {
+      index++
+      splitPoint = averageSplitPoint
+      splitPointWidth =
+        splitPoint === 0 ? 0 : measureText(singleLine.substring(0, splitPoint))
 
-//     while (textWidth > width) {
-//       index++
-//       splitPoint = averageSplitPoint
-//       splitPointWidth =
-//         splitPoint === 0 ? 0 : measureText(singleLine.substring(0, splitPoint))
+      // if (splitPointWidth === width) Nailed
+      if (splitPointWidth < width) {
+        while (splitPointWidth < width && splitPoint < singleLineLength) {
+          splitPoint++
+          splitPointWidth = measureText(tempLine.substring(0, splitPoint))
+          if (splitPoint === singleLineLength) break
+        }
+      } else if (splitPointWidth > width) {
+        while (splitPointWidth > width) {
+          splitPoint = Math.max(1, splitPoint - 1)
+          splitPointWidth = measureText(tempLine.substring(0, splitPoint))
+          if (splitPoint === 0 || splitPoint === 1) break
+        }
+      }
 
-//       // if (splitPointWidth === width) Nailed
-//       if (splitPointWidth < width) {
-//         while (splitPointWidth < width && splitPoint < singleLineLength) {
-//           splitPoint++
-//           splitPointWidth = measureText(tempLine.substring(0, splitPoint))
-//           if (splitPoint === singleLineLength) break
-//         }
-//       } else if (splitPointWidth > width) {
-//         while (splitPointWidth > width) {
-//           splitPoint = Math.max(1, splitPoint - 1)
-//           splitPointWidth = measureText(tempLine.substring(0, splitPoint))
-//           if (splitPoint === 0 || splitPoint === 1) break
-//         }
-//       }
+      averageSplitPoint = Math.round(
+        averageSplitPoint + (splitPoint - averageSplitPoint) / index
+      )
 
-//       averageSplitPoint = Math.round(
-//         averageSplitPoint + (splitPoint - averageSplitPoint) / index
-//       )
+      // Remove last character that was out of the box
+      splitPoint--
 
-//       // Remove last character that was out of the box
-//       splitPoint--
+      // Ensures a new line only happens at a space, and not amidst a word
+      if (splitPoint > 0) {
+        let tempSplitPoint = splitPoint
+        if (tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ') {
+          while (
+            tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ' &&
+            tempSplitPoint >= 0
+          ) {
+            tempSplitPoint--
+          }
+          if (tempSplitPoint > 0) {
+            splitPoint = tempSplitPoint
+          }
+        }
+      }
 
-//       // Ensures a new line only happens at a space, and not amidst a word
-//       if (splitPoint > 0) {
-//         let tempSplitPoint = splitPoint
-//         if (tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ') {
-//           while (
-//             tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ' &&
-//             tempSplitPoint >= 0
-//           ) {
-//             tempSplitPoint--
-//           }
-//           if (tempSplitPoint > 0) {
-//             splitPoint = tempSplitPoint
-//           }
-//         }
-//       }
+      if (splitPoint === 0) {
+        splitPoint = 1
+      }
 
-//       if (splitPoint === 0) {
-//         splitPoint = 1
-//       }
+      // Finally sets text to print
+      textToPrint = tempLine.substring(0, splitPoint)
 
-//       // Finally sets text to print
-//       textToPrint = tempLine.substring(0, splitPoint)
+      textToPrint = textToPrint
+      textArray.push(textToPrint)
+      tempLine = tempLine.substring(splitPoint)
+      textWidth = measureText(tempLine)
+    }
 
-//       textToPrint = justify
-//         ? justifyLine({
-//           ctx,
-//           line: textToPrint,
-//           spaceWidth,
-//           spaceChar: SPACE,
-//           width,
-//         })
-//         : textToPrint
-//       textArray.push(textToPrint)
-//       tempLine = tempLine.substring(splitPoint)
-//       textWidth = measureText(tempLine)
-//     }
+    if (textWidth > 0) {
+      textToPrint = tempLine
 
-//     if (textWidth > 0) {
-//       textToPrint = justify
-//         ? justifyLine({
-//           ctx,
-//           line: tempLine,
-//           spaceWidth,
-//           spaceChar: SPACE,
-//           width,
-//         })
-//         : tempLine
-
-//       textArray.push(textToPrint)
-//     }
-//   }
-//   return textArray
-// }
+      textArray.push(textToPrint)
+    }
+  }
+  return textArray
+}
 
 interface THProps {
   ctx: CanvasRenderingContext2D
