@@ -1,13 +1,13 @@
 // via: https://github.com/geongeorge/Canvas-Txt/tree/master
 // author didn't export related types, so I copied it here.
 
-interface JLProps {
-  ctx: CanvasRenderingContext2D
-  line: string
-  spaceWidth: number
-  spaceChar: string
-  width: number
-}
+// interface JLProps {
+//   ctx: CanvasRenderingContext2D
+//   line: string
+//   spaceWidth: number
+//   spaceChar: string
+//   width: number
+// }
 
 /**
  * This function will insert spaces between words in a line in order
@@ -17,168 +17,192 @@ interface JLProps {
  *
  * It returns the justified text.
  */
-function justifyLine({
-  ctx,
-  line,
-  spaceWidth,
-  spaceChar,
-  width,
-}: JLProps) {
-  const text = line.trim()
-  const words = text.split(/\s+/)
-  const noOfWords = words.length - 1
+// function justifyLine({
+//   ctx,
+//   line,
+//   spaceWidth,
+//   spaceChar,
+//   width,
+// }: JLProps) {
+//   const text = line.trim()
+//   const words = text.split(/\s+/)
+//   const noOfWords = words.length - 1
 
-  if (noOfWords === 0) return text
+//   if (noOfWords === 0) return text
 
-  // Width without spaces
-  const lineWidth = ctx.measureText(words.join('')).width
+//   // Width without spaces
+//   const lineWidth = ctx.measureText(words.join('')).width
 
-  const noOfSpacesToInsert = (width - lineWidth) / spaceWidth
-  const spacesPerWord = Math.floor(noOfSpacesToInsert / noOfWords)
+//   const noOfSpacesToInsert = (width - lineWidth) / spaceWidth
+//   const spacesPerWord = Math.floor(noOfSpacesToInsert / noOfWords)
 
-  if (noOfSpacesToInsert < 1) return text
+//   if (noOfSpacesToInsert < 1) return text
 
-  console.log('noOfSpacesToInsert', noOfSpacesToInsert, noOfWords)
+//   console.log('noOfSpacesToInsert', noOfSpacesToInsert, noOfWords)
 
-  const spaces = spaceChar.repeat(spacesPerWord)
+//   const spaces = spaceChar.repeat(spacesPerWord)
 
-  const justifiedText = words.join(spaces)
+//   const justifiedText = words.join(spaces)
 
-  return justifiedText
-}
+//   return justifiedText
+// }
 
 // Hair space character for precise justification
-const SPACE = '\u{200a}'
+// const SPACE = '\u{200a}'
 
 interface STProps {
   ctx: CanvasRenderingContext2D
   text: string
-  justify: boolean
   width: number
 }
 
 function splitText({
   ctx,
   text,
-  justify,
   width,
 }: STProps): string[] {
-  const textMap = new Map<string, number>()
+  // 字符分隔为数组
+  var arrText = text.split('');
+  const result = [];
+  var line = '';
 
-  const measureText = (text: string): number => {
-    let width = textMap.get(text)
-    if (width !== undefined) {
-      return width
-    }
-
-    width = ctx.measureText(text).width
-    textMap.set(text, width)
-    return width
-  }
-
-  let textArray: string[] = []
-  let initialTextArray = text.split('\n')
-
-  const spaceWidth = justify ? measureText(SPACE) : 0
-
-  let index = 0
-  let averageSplitPoint = 0
-  for (const singleLine of initialTextArray) {
-    let textWidth = measureText(singleLine)
-    const singleLineLength = singleLine.length
-
-    if (textWidth <= width) {
-      textArray.push(singleLine)
-      continue
-    }
-
-    let tempLine = singleLine
-
-    let splitPoint
-    let splitPointWidth
-    let textToPrint = ''
-
-    while (textWidth > width) {
-      index++
-      splitPoint = averageSplitPoint
-      splitPointWidth =
-        splitPoint === 0 ? 0 : measureText(singleLine.substring(0, splitPoint))
-
-      // if (splitPointWidth === width) Nailed
-      if (splitPointWidth < width) {
-        while (splitPointWidth < width && splitPoint < singleLineLength) {
-          splitPoint++
-          splitPointWidth = measureText(tempLine.substring(0, splitPoint))
-          if (splitPoint === singleLineLength) break
-        }
-      } else if (splitPointWidth > width) {
-        while (splitPointWidth > width) {
-          splitPoint = Math.max(1, splitPoint - 1)
-          splitPointWidth = measureText(tempLine.substring(0, splitPoint))
-          if (splitPoint === 0 || splitPoint === 1) break
-        }
-      }
-
-      averageSplitPoint = Math.round(
-        averageSplitPoint + (splitPoint - averageSplitPoint) / index
-      )
-
-      // Remove last character that was out of the box
-      splitPoint--
-
-      // Ensures a new line only happens at a space, and not amidst a word
-      if (splitPoint > 0) {
-        let tempSplitPoint = splitPoint
-        if (tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ') {
-          while (
-            tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ' &&
-            tempSplitPoint >= 0
-          ) {
-            tempSplitPoint--
-          }
-          if (tempSplitPoint > 0) {
-            splitPoint = tempSplitPoint
-          }
-        }
-      }
-
-      if (splitPoint === 0) {
-        splitPoint = 1
-      }
-
-      // Finally sets text to print
-      textToPrint = tempLine.substring(0, splitPoint)
-
-      textToPrint = justify
-        ? justifyLine({
-          ctx,
-          line: textToPrint,
-          spaceWidth,
-          spaceChar: SPACE,
-          width,
-        })
-        : textToPrint
-      textArray.push(textToPrint)
-      tempLine = tempLine.substring(splitPoint)
-      textWidth = measureText(tempLine)
-    }
-
-    if (textWidth > 0) {
-      textToPrint = justify
-        ? justifyLine({
-          ctx,
-          line: tempLine,
-          spaceWidth,
-          spaceChar: SPACE,
-          width,
-        })
-        : tempLine
-
-      textArray.push(textToPrint)
+  for (var n = 0; n < arrText.length; n++) {
+    var testLine = line + arrText[n];
+    var metrics = ctx.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > width && n > 0) {
+      result.push(line);
+      line = arrText[n];
+    } else {
+      line = testLine;
     }
   }
-  return textArray
+  result.push(line);
+  return result;
 }
+
+// function splitText({
+//   ctx,
+//   text,
+//   justify,
+//   width,
+// }: STProps): string[] {
+//   const textMap = new Map<string, number>()
+
+//   const measureText = (text: string): number => {
+//     let width = textMap.get(text)
+//     if (width !== undefined) {
+//       return width
+//     }
+
+//     width = ctx.measureText(text).width
+//     textMap.set(text, width)
+//     return width
+//   }
+
+//   let textArray: string[] = []
+//   let initialTextArray = text.split('\n')
+
+//   const spaceWidth = justify ? measureText(SPACE) : 0
+
+//   let index = 0
+//   let averageSplitPoint = 0
+//   for (const singleLine of initialTextArray) {
+//     let textWidth = measureText(singleLine)
+//     const singleLineLength = singleLine.length
+
+//     if (textWidth <= width) {
+//       textArray.push(singleLine)
+//       continue
+//     }
+
+//     let tempLine = singleLine
+
+//     let splitPoint
+//     let splitPointWidth
+//     let textToPrint = ''
+
+//     while (textWidth > width) {
+//       index++
+//       splitPoint = averageSplitPoint
+//       splitPointWidth =
+//         splitPoint === 0 ? 0 : measureText(singleLine.substring(0, splitPoint))
+
+//       // if (splitPointWidth === width) Nailed
+//       if (splitPointWidth < width) {
+//         while (splitPointWidth < width && splitPoint < singleLineLength) {
+//           splitPoint++
+//           splitPointWidth = measureText(tempLine.substring(0, splitPoint))
+//           if (splitPoint === singleLineLength) break
+//         }
+//       } else if (splitPointWidth > width) {
+//         while (splitPointWidth > width) {
+//           splitPoint = Math.max(1, splitPoint - 1)
+//           splitPointWidth = measureText(tempLine.substring(0, splitPoint))
+//           if (splitPoint === 0 || splitPoint === 1) break
+//         }
+//       }
+
+//       averageSplitPoint = Math.round(
+//         averageSplitPoint + (splitPoint - averageSplitPoint) / index
+//       )
+
+//       // Remove last character that was out of the box
+//       splitPoint--
+
+//       // Ensures a new line only happens at a space, and not amidst a word
+//       if (splitPoint > 0) {
+//         let tempSplitPoint = splitPoint
+//         if (tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ') {
+//           while (
+//             tempLine.substring(tempSplitPoint, tempSplitPoint + 1) != ' ' &&
+//             tempSplitPoint >= 0
+//           ) {
+//             tempSplitPoint--
+//           }
+//           if (tempSplitPoint > 0) {
+//             splitPoint = tempSplitPoint
+//           }
+//         }
+//       }
+
+//       if (splitPoint === 0) {
+//         splitPoint = 1
+//       }
+
+//       // Finally sets text to print
+//       textToPrint = tempLine.substring(0, splitPoint)
+
+//       textToPrint = justify
+//         ? justifyLine({
+//           ctx,
+//           line: textToPrint,
+//           spaceWidth,
+//           spaceChar: SPACE,
+//           width,
+//         })
+//         : textToPrint
+//       textArray.push(textToPrint)
+//       tempLine = tempLine.substring(splitPoint)
+//       textWidth = measureText(tempLine)
+//     }
+
+//     if (textWidth > 0) {
+//       textToPrint = justify
+//         ? justifyLine({
+//           ctx,
+//           line: tempLine,
+//           spaceWidth,
+//           spaceChar: SPACE,
+//           width,
+//         })
+//         : tempLine
+
+//       textArray.push(textToPrint)
+//     }
+//   }
+//   return textArray
+// }
 
 interface THProps {
   ctx: CanvasRenderingContext2D
@@ -270,7 +294,6 @@ function drawText(
   const textArray = splitText({
     ctx,
     text: myText,
-    justify: config.justify,
     width,
   })
 
