@@ -124,12 +124,10 @@ function loadSnippetIfNeeded() {
   if (!snippetId) {
     if (url.pathname.indexOf("/snippet/") !== -1) {
       snippetId = url.pathname.replace("/snippet/", "") + url.search;
-      snippetId = snippetId.split("?")[0];
     }
 
     if (url.pathname.indexOf("/render/") !== -1) {
       snippetId = url.pathname.replace("/render/", "") + url.search;
-      snippetId = snippetId.split("?")[0];
     }
   }
 
